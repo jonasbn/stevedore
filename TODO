@@ -1,0 +1,5 @@
+# Story
+
+- `--edit` / `-e` opens in interactive mode
+
+- `--stdin` / `-s` reads from standard in (STDIN)
