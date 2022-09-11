@@ -1,6 +1,6 @@
 # stevedore
 
-`stevedore` is a small commandline tool taking it's name from the worker working on the dock with loading cargo unto ships.
+`stevedore` is a small command line tool taking it's name from the worker working on the dock with loading cargo unto ships.
 
 REF: [Wikipedia][WIKIPEDIA]
 
@@ -31,6 +31,8 @@ main.go ignored
 stevedore included
 ```
 
+## Parameters
+
 Since this is just an analysis/reporting tool it can be fed with parameters to diverge from the default behaviour.
 
 - `--help` / `-h` emits a brief help message
@@ -40,12 +42,25 @@ Since this is just an analysis/reporting tool it can be fed with parameters to d
 - `--verbose` / `-v` emits more verbose output
 - `--debug` / `-d` emits debug information
 
+### Verbose
+
 If the verbose flag is set the output is altered and is more explanatory:
 
 ```bash
 stevedore -verbose .
 ```
 
+```text
+path . not ignored and is included in Docker image
+path .dockerignore not ignored and is included in Docker image
+path .gitignore not ignored and is included in Docker image
+path README.md not ignored and is included in Docker image
+path TODO not ignored and is included in Docker image
+path go.mod not ignored and is included in Docker image
+path go.sum not ignored and is included in Docker image
+path main.go ignored and is included in Docker image
+path stevedore not ignored and is included in Docker image
+```
 
 ## Return Values
 
