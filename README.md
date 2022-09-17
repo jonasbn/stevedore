@@ -43,6 +43,7 @@ Since this is just an analysis/reporting tool it can be fed with parameters to d
 - `--debug` emits debug information
 - `--included` emits only included files (non-ignored)
 - `--excluded` emits only excluded files (ignored)
+- `--invertcolors` inverts the used colors
 
 ### Verbose
 

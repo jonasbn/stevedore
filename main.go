@@ -45,6 +45,9 @@ func main() {
 	var included bool
 	flag.BoolVar(&included, "included", false, "only output included files")
 
+	var colorOutputInverted bool
+	flag.BoolVar(&colorOutputInverted, "invertcolors", false, "inverts the used color")
+
 	nocolorEnv := os.Getenv("NO_COLOR")
 
 	flag.Parse()
@@ -94,6 +97,13 @@ func main() {
 
 	if nocolorOutput || nocolorEnv != "" || nocolorEnv == "1" {
 		colorOutput = false
+		colorOutputInverted = false
+	}
+
+	if colorOutputInverted {
+		tmpColor := ignoredColor
+		ignoredColor = includedColor
+		includedColor = tmpColor
 	}
 
 	err = filepath.Walk(path, func(path string, info fs.FileInfo, err error) error {

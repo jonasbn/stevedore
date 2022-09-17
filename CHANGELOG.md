@@ -1,6 +1,14 @@
 # Change log for stevedore
 
-## 2022-09-17 Feature release, update not required
+## 0.4.0 2022-09-17 Feature release, update not required
+
+- Added new command line option `--invertcolor` which invert the used colors
+
+## 0.3.1 2022-09-17 Minor bug fix release, update recommended
+
+- Had shuffled the logic around, confusing the terms when updated the main body of code
+
+## 0.3.0 2022-09-17 Feature release, update not required
 
 - Added two new command line options
   - `--excluded` which only outputs what is excluded
@@ -8,11 +16,11 @@
 
   The first need more work and I need to settle on a useful path output, so this is WIP
 
-## 2022-09-11 Feature release, update not required
+## 0.2.0 2022-09-11 Feature release, update not required
 
 - Got the short forms for the command line in place
 
-## 2022-09-10 Feature release, update not required
+## 0.1.0 2022-09-10 Feature release, update not required
 
 - First working version, supporting:
   - reporting on ignored and non-ignored file system components handled by a given Docker ignore file
