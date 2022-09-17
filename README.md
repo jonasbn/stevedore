@@ -40,7 +40,9 @@ Since this is just an analysis/reporting tool it can be fed with parameters to d
 - `--color` / `-c` emits output on color
 - `--nocolor` / `-n` emits output suppressing use of colors
 - `--verbose` / `-v` emits more verbose output
-- `--debug` / `-d` emits debug information
+- `--debug` emits debug information
+- `--included` emits only included files (non-ignored)
+- `--excluded` emits only excluded files (ignored)
 
 ### Verbose
 

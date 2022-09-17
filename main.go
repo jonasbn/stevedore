@@ -102,19 +102,19 @@ func main() {
 			return err
 		}
 		if ignoreObject.MatchesPath(info.Name()) {
-			if included {
+			if excluded {
 				if colorOutput {
 					color.Set(ignoredColor)
 				}
 				if verbose {
-					fmt.Printf("path %s ignored and is included in Docker image\n", info.Name())
+					fmt.Printf("path %s ignored and is not included in Docker image\n", info.Name())
 				} else {
 					fmt.Printf("%s\n", info.Name())
 				}
 				color.Unset()
 			}
 		} else {
-			if excluded {
+			if included {
 				if colorOutput {
 					color.Set(includedColor)
 				}
