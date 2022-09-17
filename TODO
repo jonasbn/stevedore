@@ -3,3 +3,5 @@
 - `--edit` / `-e` opens in interactive mode
 
 - `--stdin` / `-s` reads from standard in (STDIN)
+
+- `--tree` / `-t` output as tree structure
