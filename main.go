@@ -13,8 +13,8 @@ import (
 )
 
 var (
-	ignored  = color.FgGreen
-	included = color.FgHiRed
+	ignoredColor  = color.FgGreen
+	includedColor = color.FgHiRed
 )
 
 func main() {
@@ -25,7 +25,6 @@ func main() {
 
 	var debug bool
 	flag.BoolVar(&debug, "debug", false, "emit debug messages")
-	flag.BoolVar(&debug, "d", false, "emit debug messages")
 
 	var colorOutput bool
 	flag.BoolVar(&colorOutput, "color", true, "enable colors")
@@ -38,6 +37,13 @@ func main() {
 	var ignoreFile string
 	flag.StringVar(&ignoreFile, "ignorefile", "", "a path to an specific ignore file")
 	flag.StringVar(&ignoreFile, "i", "", "a path to an specific ignore file")
+
+	var excluded bool
+	flag.BoolVar(&excluded, "excluded", false, "only output excluded files")
+	flag.BoolVar(&excluded, "x", false, "only output excluded files")
+
+	var included bool
+	flag.BoolVar(&included, "included", false, "only output included files")
 
 	nocolorEnv := os.Getenv("NO_COLOR")
 
@@ -54,13 +60,29 @@ func main() {
 		}
 	}
 
+	if excluded {
+		included = false
+	}
+
+	if included {
+		excluded = false
+	}
+
+	if !included && !excluded {
+		included = true
+		excluded = true
+	}
+
 	if debug {
-		fmt.Println("color:", colorOutput)
-		fmt.Println("nocolor:", nocolorOutput)
-		fmt.Println("ignoreFile:", ignoreFile)
-		fmt.Println("verbose:", verbose)
-		fmt.Println("tail:", flag.Args())
-		fmt.Println("ENV:", nocolorEnv)
+		fmt.Println("color: ", colorOutput)
+		fmt.Println("nocolor: ", nocolorOutput)
+		fmt.Println("ignoreFile: ", ignoreFile)
+		fmt.Println("debug: ", debug)
+		fmt.Println("verbose: ", verbose)
+		fmt.Println("excluded: ", excluded)
+		fmt.Println("included: ", included)
+		fmt.Println("tail: ", flag.Args())
+		fmt.Println("ENV: ", nocolorEnv)
 	}
 
 	ignoreObject, err := ignore.CompileIgnoreFile(ignoreFile)
@@ -80,25 +102,29 @@ func main() {
 			return err
 		}
 		if ignoreObject.MatchesPath(info.Name()) {
-			if colorOutput {
-				color.Set(ignored)
+			if included {
+				if colorOutput {
+					color.Set(ignoredColor)
+				}
+				if verbose {
+					fmt.Printf("path %s ignored and is included in Docker image\n", info.Name())
+				} else {
+					fmt.Printf("%s\n", info.Name())
+				}
+				color.Unset()
 			}
-			if verbose {
-				fmt.Printf("path %s ignored and is included in Docker image\n", info.Name())
-			} else {
-				fmt.Printf("%s ignored\n", info.Name())
-			}
-			color.Unset()
 		} else {
-			if colorOutput {
-				color.Set(included)
+			if excluded {
+				if colorOutput {
+					color.Set(includedColor)
+				}
+				if verbose {
+					fmt.Printf("path %s not ignored and is included in Docker image\n", info.Name())
+				} else {
+					fmt.Printf("%s\n", info.Name())
+				}
+				color.Unset()
 			}
-			if verbose {
-				fmt.Printf("path %s not ignored and is included in Docker image\n", info.Name())
-			} else {
-				fmt.Printf("%s included\n", info.Name())
-			}
-			color.Unset()
 		}
 		if debug {
 			fmt.Printf("visited file or dir: %q\n", path)
