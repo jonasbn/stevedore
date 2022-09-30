@@ -17,7 +17,14 @@ var (
 	includedColor = color.FgHiRed
 )
 
+// main function is a wrapper on the realMain function and emits OS exit code based on wrapped function
 func main() {
+	os.Exit(realMain())
+}
+
+func realMain() int {
+
+	flag.CommandLine = flag.NewFlagSet(os.Args[0], flag.ExitOnError)
 
 	var verbose bool
 	flag.BoolVar(&verbose, "verbose", false, "emit verbose output")
@@ -53,6 +60,10 @@ func main() {
 	flag.Parse()
 
 	path := flag.Arg(0)
+
+	if path == "" {
+		path = "."
+	}
 
 	if ignoreFile == "" {
 		ignoreFile = path + "/.dockerignore"
@@ -92,7 +103,7 @@ func main() {
 
 	if err != nil {
 		log.Fatalf("unable to read .dockerignore file")
-		os.Exit(1)
+		return 1
 	}
 
 	if nocolorOutput || nocolorEnv != "" || nocolorEnv == "1" {
@@ -143,8 +154,8 @@ func main() {
 	})
 	if err != nil {
 		fmt.Printf("error walking the path %q: %v\n", path, err)
-		os.Exit(2)
+		return 2
 	}
 
-	os.Exit(0)
+	return 0
 }
