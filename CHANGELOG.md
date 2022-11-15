@@ -1,5 +1,9 @@
 # Change log for stevedore
 
+## 0.5.0 2022-11-15 Feature release, update not required
+
+- Implementation of basic support of `.stevedorignore` file
+
 ## 0.4.0 2022-09-17 Feature release, update not required
 
 - Added new command line option `--invertcolor` which invert the used colors
