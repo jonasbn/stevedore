@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"flag"
 	"fmt"
 	"io/fs"
@@ -69,8 +70,8 @@ func realMain() int {
 		ignoreFile = path + "/.dockerignore"
 
 		if debug {
-			fmt.Println("path:", path)
-			fmt.Println("ignoreFile:", ignoreFile)
+			fmt.Println("path: ", path)
+			fmt.Println("ignoreFile: ", ignoreFile)
 		}
 	}
 
@@ -117,12 +118,39 @@ func realMain() int {
 		includedColor = tmpColor
 	}
 
+	ownIgnoreFile := ".stevedoreignore"
+	ownIgnoreObject := ignore.CompileIgnoreLines([]string{}...)
+
+	// TODO this logic needs to be cleaned up
+	if _, err := os.Stat(ownIgnoreFile); errors.Is(err, fs.ErrNotExist) {
+		if debug {
+			fmt.Println("No stevedore ignorefile found")
+		}
+	} else {
+		if debug {
+			fmt.Println("stevedore ignorefile found")
+		}
+		ownIgnoreObject, _ = ignore.CompileIgnoreFile(ownIgnoreFile)
+	}
+
 	err = filepath.Walk(path, func(path string, info fs.FileInfo, err error) error {
 		if err != nil {
 			fmt.Printf("prevent panic by handling failure accessing a path %q: %v\n", path, err)
 			return err
 		}
-		if ignoreObject.MatchesPath(info.Name()) {
+		if ownIgnoreObject.MatchesPath(path) && info.IsDir() {
+			if verbose {
+				fmt.Printf("%s have been ignored by stevedore, no traversal\n", info.Name())
+			}
+			return filepath.SkipDir
+		} else if ownIgnoreObject.MatchesPath(path) {
+			if verbose {
+				fmt.Printf("%s have been ignored by stevedore\n", info.Name())
+			}
+			return nil
+		}
+
+		if ignoreObject.MatchesPath(path) {
 			if excluded {
 				if colorOutput {
 					color.Set(ignoredColor)
@@ -147,6 +175,7 @@ func realMain() int {
 				color.Unset()
 			}
 		}
+		/*}*/
 		if debug {
 			fmt.Printf("visited file or dir: %q\n", path)
 		}
