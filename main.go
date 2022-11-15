@@ -121,16 +121,22 @@ func realMain() int {
 	ownIgnoreFile := ".stevedoreignore"
 	ownIgnoreObject := ignore.CompileIgnoreLines([]string{}...)
 
-	// TODO this logic needs to be cleaned up
-	if _, err := os.Stat(ownIgnoreFile); errors.Is(err, fs.ErrNotExist) {
-		if debug {
-			fmt.Println("No stevedore ignorefile found")
-		}
-	} else {
+	if _, err := os.Stat(ownIgnoreFile); !errors.Is(err, fs.ErrNotExist) {
 		if debug {
 			fmt.Println("stevedore ignorefile found")
 		}
-		ownIgnoreObject, _ = ignore.CompileIgnoreFile(ownIgnoreFile)
+
+		ownIgnoreObject, err = ignore.CompileIgnoreFile(ownIgnoreFile)
+
+		if err != nil {
+			fmt.Printf("unable to read %s file, ignoring - %v\n", ownIgnoreFile, err)
+			ownIgnoreObject = ignore.CompileIgnoreLines([]string{}...)
+		}
+
+	} else {
+		if debug {
+			fmt.Println("No stevedore ignorefile found")
+		}
 	}
 
 	err = filepath.Walk(path, func(path string, info fs.FileInfo, err error) error {
@@ -175,7 +181,7 @@ func realMain() int {
 				color.Unset()
 			}
 		}
-		/*}*/
+
 		if debug {
 			fmt.Printf("visited file or dir: %q\n", path)
 		}
