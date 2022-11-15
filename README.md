@@ -71,6 +71,18 @@ path stevedore not ignored and is included in Docker image
 - `1` ignore file was not found or could not be read
 - `2` specified directory could not be read or only partially read
 
+## The stevedore ignore
+
+You can add an ignore file, named `.stevedoreignore` to your directory. It will tell `stevedore` what files and directories to ignore prior to making it's analysis.
+
+Meaning that patterns in this files matched, will be excluded.
+
+The `.stevedoreignore` file follows the general implementation pattern. and example could be:
+
+```gitignore
+.git
+```
+
 ## Compatibility
 
 - [Docker ignore][DOCKERIGNORE]: `.dockerignore` (main purpose)
