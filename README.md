@@ -87,7 +87,7 @@ The `.stevedoreignore` file follows the general implementation pattern. and exam
 
 - [Docker ignore][DOCKERIGNORE]: `.dockerignore` (main purpose)
 - [Git ignore][GITIGNORE]: `.gitignore`
-- Yak ignore: `.yakignore`
+- [Yak ignore][YAKIGNORE]: `.yakignore`
 
 ## Incompatibility
 
@@ -99,8 +99,10 @@ The `.stevedoreignore` file follows the general implementation pattern. and exam
 - [Docker ignore][DOCKERIGNORE]
 - [Git ignore][GITIGNORE]
 - [Go gitignore][GO-GITIGNORE]
+- [Yak ignore][YAKIGNORE]
 
 [WIKIPEDIA]: https://en.wikipedia.org/wiki/Stevedore
 [GO-GITIGNORE]: https://pkg.go.dev/github.com/sabhiram/go-gitignore
 [GITIGNORE]: https://git-scm.com/docs/gitignore
 [DOCKERIGNORE]: https://docs.docker.com/engine/reference/builder/#dockerignore-file
+[YAKIGNORE]: https://jonasbn.github.io/yak/
