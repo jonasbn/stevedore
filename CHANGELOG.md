@@ -1,5 +1,10 @@
 # Change log for stevedore
 
+## 0.6.0 2022-11-21 Feature release, update not required
+
+- Added support for reading ignore file via STDIN, using new parameter:
+  - `--stdin`
+
 ## 0.5.0 2022-11-15 Feature release, update not required
 
 - Implementation of basic support of `.stevedorignore` file
