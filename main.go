@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"errors"
 	"flag"
 	"fmt"
@@ -34,6 +35,10 @@ func realMain() int {
 	var debug bool
 	flag.BoolVar(&debug, "debug", false, "emit debug messages")
 
+	var stdin bool
+	flag.BoolVar(&stdin, "stdin", false, "read from ignore file from STDIN")
+	flag.BoolVar(&stdin, "s", false, "read from ignore file from STDIN")
+
 	var colorOutput bool
 	flag.BoolVar(&colorOutput, "color", true, "enable colors")
 	flag.BoolVar(&colorOutput, "c", true, "enable colors")
@@ -66,12 +71,33 @@ func realMain() int {
 		path = "."
 	}
 
-	if ignoreFile == "" {
-		ignoreFile = path + "/.dockerignore"
+	var ignoreLines string
+
+	if stdin {
+		scanner := bufio.NewScanner(os.Stdin)
+
+		for scanner.Scan() {
+			ignoreLines = scanner.Text()
+		}
+
+		if err := scanner.Err(); err != nil {
+			log.Fatalf(err.Error())
+		}
 
 		if debug {
 			fmt.Println("path: ", path)
-			fmt.Println("ignoreFile: ", ignoreFile)
+			fmt.Println("ignore string from STDIN")
+		}
+
+	} else {
+
+		if ignoreFile == "" {
+			ignoreFile = path + "/.dockerignore"
+
+			if debug {
+				fmt.Println("path: ", path)
+				fmt.Println("ignoreFile: ", ignoreFile)
+			}
 		}
 	}
 
@@ -100,11 +126,18 @@ func realMain() int {
 		fmt.Println("ENV: ", nocolorEnv)
 	}
 
-	ignoreObject, err := ignore.CompileIgnoreFile(ignoreFile)
+	var ignoreObject = ignore.CompileIgnoreLines([]string{}...)
 
-	if err != nil {
-		log.Fatalf("unable to read .dockerignore file")
-		return 1
+	if stdin {
+		ignoreObject = ignore.CompileIgnoreLines(ignoreLines)
+	} else {
+		var err error
+		ignoreObject, err = ignore.CompileIgnoreFile(ignoreFile)
+
+		if err != nil {
+			log.Fatalf("unable to read %s file", ignoreFile)
+			return 1
+		}
 	}
 
 	if nocolorOutput || nocolorEnv != "" || nocolorEnv == "1" {
@@ -117,6 +150,8 @@ func realMain() int {
 		ignoredColor = includedColor
 		includedColor = tmpColor
 	}
+
+	var err error
 
 	ownIgnoreFile := ".stevedoreignore"
 	ownIgnoreObject := ignore.CompileIgnoreLines([]string{}...)

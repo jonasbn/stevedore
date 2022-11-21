@@ -31,6 +31,8 @@ main.go ignored
 stevedore included
 ```
 
+You can actually emit the path parameter, `stevedore` defaults to current directory.
+
 ## Parameters
 
 Since this is just an analysis/reporting tool it can be fed with parameters to diverge from the default behaviour.
@@ -44,8 +46,9 @@ Since this is just an analysis/reporting tool it can be fed with parameters to d
 - `--included` emits only included files (non-ignored)
 - `--excluded` emits only excluded files (ignored)
 - `--invertcolors` inverts the used colors
+- `--stdin` / `-s` reads ignore file from STDIN
 
-### Verbose
+### Verbosity
 
 If the verbose flag is set the output is altered and is more explanatory:
 
@@ -64,6 +67,18 @@ path go.sum not ignored and is included in Docker image
 path main.go ignored and is included in Docker image
 path stevedore not ignored and is included in Docker image
 ```
+
+### Passing in a ignore file using either stdin and ignorefile parameters
+
+If you have a ignore file and you want to pass it to `stevedore` you can either use, the `--ignorefile parameter`:
+
+`stevedore --ignorefile /path/to/my/ignorefile`
+
+Or you can pass it in via STDIN:
+
+`cat /path/to/my/ignorefile | stevedore --stdin`
+
+These will render the same result.
 
 ## Return Values
 
