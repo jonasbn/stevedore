@@ -68,7 +68,7 @@ path main.go ignored and is included in Docker image
 path stevedore not ignored and is included in Docker image
 ```
 
-### Passing in a ignore file using either stdin and ignorefile parameters
+### Passing in a ignore file using either stdin and ignore file parameters
 
 If you have a ignore file and you want to pass it to `stevedore` you can either use, the `--ignorefile parameter`:
 
