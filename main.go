@@ -9,6 +9,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/fatih/color"
 	ignore "github.com/sabhiram/go-gitignore"
@@ -76,17 +77,20 @@ func realMain() int {
 	if stdin {
 		scanner := bufio.NewScanner(os.Stdin)
 
+		var lines []string
 		for scanner.Scan() {
-			ignoreLines = scanner.Text()
-		}
+			// read line from stdin using newline as separator
+			line := scanner.Text()
 
-		if err := scanner.Err(); err != nil {
-			log.Fatalf(err.Error())
+			//append the line to a slice
+			lines = append(lines, line)
 		}
+		ignoreLines = strings.Join(lines, "\n")
 
 		if debug {
 			fmt.Println("path: ", path)
 			fmt.Println("ignore string from STDIN")
+			fmt.Printf("ignorelines: \n%s\n\n", ignoreLines)
 		}
 
 	} else {
