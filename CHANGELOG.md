@@ -2,7 +2,7 @@
 
 ## 0.6.1 2022-11-22 Bug fix release, update not required
 
-- Fixed bug in consumtion of file from STDIN, the contents would only be partial
+- Fixed bug in consumption of file from STDIN, the contents would only be partial
 
 ## 0.6.0 2022-11-21 Feature release, update not required
 
