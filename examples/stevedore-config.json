@@ -1,0 +1,6 @@
+{
+    "$schema": "../stevedore-config.schema.json",
+    "exclusion": false,
+    "verbosity": true,
+    "color inversion": true
+}
