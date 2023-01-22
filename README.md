@@ -1,6 +1,6 @@
 # stevedore
 
-`stevedore` is a small command line tool taking it's name from the worker working on the dock with loading cargo unto ships.
+`stevedore` is a small command line tool taking it's name from the worker working on the dock with loading cargo onto ships.
 
 REF: [Wikipedia][WIKIPEDIA]
 
@@ -16,8 +16,8 @@ The above example
 
 1. Locates the `.dockerignore` file
 1. Reads the current directory (specified as `.`) recursively
-1. Compares the located `.dockerignore` file with the contents of the specified directory
-1. Outputs a report
+1. Compares the located `.dockerignore` file with the contents of the specified directory and below
+1. Outputs a more or less expressive and colourful report
 
 ```text
 . included
@@ -90,7 +90,7 @@ These will render the same result.
 
 You can add an ignore file, named `.stevedoreignore` to your directory. It will tell `stevedore` what files and directories to ignore prior to making it's analysis.
 
-Meaning that patterns in this files matched, will be excluded.
+Meaning that patterns in this file which are matched, will be excluded.
 
 The `.stevedoreignore` file follows the general implementation pattern. and example could be:
 
