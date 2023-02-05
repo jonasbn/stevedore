@@ -150,9 +150,7 @@ func realMain() int {
 	}
 
 	if colorOutputInverted {
-		tmpColor := ignoredColor
-		ignoredColor = includedColor
-		includedColor = tmpColor
+		ignoredColor, includedColor = includedColor, ignoredColor
 	}
 
 	var err error
