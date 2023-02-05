@@ -82,7 +82,7 @@ func realMain() int {
 			// read line from stdin using newline as separator
 			line := scanner.Text()
 
-			//append the line to a slice
+			// append the line to a slice
 			lines = append(lines, line)
 		}
 		ignoreLines = strings.Join(lines, "\n")
