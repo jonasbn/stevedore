@@ -1,9 +1,0 @@
-{
-    "default": true,
-    "MD004": { "style": "dash" },
-    "html": false,
-    "blanks-around-headings": false,
-    "single-h1": false,
-    "line-length": false,
-    "commands-show-output": false
-}
