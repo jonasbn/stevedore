@@ -1,5 +1,11 @@
 # Change log for stevedore
 
+## 0.7.0 2023-02-07 feature release, update not required
+
+- Improved output so both full path and flattened list is available
+  - full path is the new default, can be explicitly requested using ^--fullpath`
+  - flat structure, can be explicitly requested using ^--nofullpath`
+
 ## 0.6.1 2022-11-22 Bug fix release, update not required
 
 - Fixed bug in consumption of file from STDIN, the contents would only be partial
