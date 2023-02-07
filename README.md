@@ -1,6 +1,6 @@
 # stevedore
 
-`stevedore` is a small command line tool taking it's name from the worker working on the dock with loading cargo unto ships.
+`stevedore` is a small command line tool taking it's name from the worker, working on the dock with loading cargo unto ships.
 
 REF: [Wikipedia][WIKIPEDIA]
 
@@ -15,23 +15,23 @@ stevedore .
 The above example
 
 1. Locates the `.dockerignore` file
-1. Reads the current directory (specified as `.`) recursively
-1. Compares the located `.dockerignore` file with the contents of the specified directory
-1. Outputs a report
+2. Reads the current directory (specified as `.`) recursively
+3. Compares the located `.dockerignore` file with the contents of the specified directory
+4. Outputs a report
 
 ```text
-. included
-.dockerignore included
-.gitignore included
-README.md included
-TODO included
-go.mod included
-go.sum included
-main.go ignored
-stevedore included
+.
+.dockerignore
+.gitignore
+README.md
+TODO
+go.mod
+go.sum
+main.go
+stevedore
 ```
 
-You can actually emit the path parameter, `stevedore` defaults to current directory.
+You can actually emit the path parameter, since `stevedore` defaults to current directory.
 
 ## Parameters
 
@@ -47,6 +47,7 @@ Since this is just an analysis/reporting tool it can be fed with parameters to d
 - `--excluded` emits only excluded files (ignored)
 - `--invertcolors` inverts the used colors
 - `--stdin` / `-s` reads ignore file from STDIN
+- `--fullpath` / `-f` emits full path of encountered files and directories
 
 ### Verbosity
 
@@ -57,15 +58,15 @@ stevedore -verbose .
 ```
 
 ```text
-path . not ignored and is included in Docker image
-path .dockerignore not ignored and is included in Docker image
-path .gitignore not ignored and is included in Docker image
-path README.md not ignored and is included in Docker image
-path TODO not ignored and is included in Docker image
-path go.mod not ignored and is included in Docker image
-path go.sum not ignored and is included in Docker image
-path main.go ignored and is included in Docker image
-path stevedore not ignored and is included in Docker image
+path . is not ignored and is included in Docker image
+path .dockerignore is not ignored and is included in Docker image
+path .gitignore is not ignored and is included in Docker image
+path README.md is not ignored and is included in Docker image
+path TODO is not ignored and is included in Docker image
+path go.mod is not ignored and is included in Docker image
+path go.sum is not ignored and is included in Docker image
+path main.go is ignored and is included in Docker image
+path stevedore is not ignored and is included in Docker image
 ```
 
 ### Passing in a ignore file using either stdin and ignore file parameters
@@ -90,7 +91,7 @@ These will render the same result.
 
 You can add an ignore file, named `.stevedoreignore` to your directory. It will tell `stevedore` what files and directories to ignore prior to making it's analysis.
 
-Meaning that patterns in this files matched, will be excluded.
+Meaning that patterns in this files matched, will be _excluded_.
 
 The `.stevedoreignore` file follows the general implementation pattern. and example could be:
 
