@@ -6,3 +6,5 @@ NONINFRINGEMENT
 WIP
 STDIN
 stdin
+fullpath
+nofullpath
