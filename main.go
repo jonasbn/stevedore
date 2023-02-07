@@ -62,6 +62,13 @@ func realMain() int {
 	var colorOutputInverted bool
 	flag.BoolVar(&colorOutputInverted, "invertcolors", false, "inverts the used color")
 
+	var fullPath bool
+	flag.BoolVar(&fullPath, "fullpath", true, "emits files and directories with full path")
+	flag.BoolVar(&fullPath, "f", true, "emits files and directories with full path")
+
+	var noFullPath bool
+	flag.BoolVar(&noFullPath, "nofullpath", false, "emits files and directories without full path")
+
 	nocolorEnv := os.Getenv("NO_COLOR")
 
 	flag.Parse()
@@ -126,6 +133,7 @@ func realMain() int {
 		fmt.Println("verbose: ", verbose)
 		fmt.Println("excluded: ", excluded)
 		fmt.Println("included: ", included)
+		fmt.Println("fullpath: ", fullPath)
 		fmt.Println("tail: ", flag.Args())
 		fmt.Println("ENV: ", nocolorEnv)
 	}
@@ -151,6 +159,10 @@ func realMain() int {
 
 	if colorOutputInverted {
 		ignoredColor, includedColor = includedColor, ignoredColor
+	}
+
+	if noFullPath {
+		fullPath = false
 	}
 
 	var err error
@@ -193,15 +205,23 @@ func realMain() int {
 			return nil
 		}
 
+		var entry string
+
+		if fullPath {
+			entry = path
+		} else {
+			entry = info.Name()
+		}
+
 		if ignoreObject.MatchesPath(path) {
 			if excluded {
 				if colorOutput {
 					color.Set(ignoredColor)
 				}
 				if verbose {
-					fmt.Printf("path %s ignored and is not included in Docker image\n", info.Name())
+					fmt.Printf("path %s ignored and is not included in Docker image\n", entry)
 				} else {
-					fmt.Printf("%s\n", info.Name())
+					fmt.Printf("%s\n", entry)
 				}
 				color.Unset()
 			}
@@ -211,9 +231,9 @@ func realMain() int {
 					color.Set(includedColor)
 				}
 				if verbose {
-					fmt.Printf("path %s not ignored and is included in Docker image\n", info.Name())
+					fmt.Printf("path %s not ignored and is included in Docker image\n", entry)
 				} else {
-					fmt.Printf("%s\n", info.Name())
+					fmt.Printf("%s\n", entry)
 				}
 				color.Unset()
 			}
