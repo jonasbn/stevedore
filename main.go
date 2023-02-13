@@ -100,15 +100,12 @@ func realMain() int {
 			fmt.Printf("ignorelines: \n%s\n\n", ignoreLines)
 		}
 
-	} else {
+	} else if ignoreFile == "" {
+		ignoreFile = path + "/.dockerignore"
 
-		if ignoreFile == "" {
-			ignoreFile = path + "/.dockerignore"
-
-			if debug {
-				fmt.Println("path: ", path)
-				fmt.Println("ignoreFile: ", ignoreFile)
-			}
+		if debug {
+			fmt.Println("path: ", path)
+			fmt.Println("ignoreFile: ", ignoreFile)
 		}
 	}
 
@@ -182,10 +179,8 @@ func realMain() int {
 			ownIgnoreObject = ignore.CompileIgnoreLines([]string{}...)
 		}
 
-	} else {
-		if debug {
-			fmt.Println("No stevedore ignorefile found")
-		}
+	} else if debug {
+		fmt.Println("No stevedore ignorefile found")
 	}
 
 	err = filepath.Walk(path, func(path string, info fs.FileInfo, err error) error {
