@@ -36,7 +36,16 @@
         "debug": {
           "description": "enable debug output",
           "type": "boolean"
+        },
+        "fullpath": {
+          "description": "enable full path of encountered files and directories",
+          "type": "boolean"
+        },
+        "nofullpath": {
+          "description": "disable full path of encountered files and directories",
+          "type": "boolean"
         }
+
       },
       "required": []
 }

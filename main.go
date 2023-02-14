@@ -30,6 +30,8 @@ type config struct {
 	Excluded     bool
 	Included     bool
 	Invertcolors bool
+	Fullpath     bool
+	Nofullpath   bool
 }
 
 // main function is a wrapper on the realMain function and emits OS exit code based on wrapped function
@@ -57,10 +59,8 @@ func realMain() int {
 			fmt.Println("error unmarshalling JSON configuration:", err)
 		}
 
-	} else {
-		if config.Debug {
-			fmt.Println("No stevedore configuration file found")
-		}
+	} else if config.Debug {
+		fmt.Println("No stevedore configuration file found")
 	}
 
 	flag.CommandLine = flag.NewFlagSet(os.Args[0], flag.ExitOnError)
@@ -91,6 +91,11 @@ func realMain() int {
 
 	flag.BoolVar(&config.Invertcolors, "invertcolors", false, "inverts the used color")
 
+	flag.BoolVar(&config.Fullpath, "fullpath", true, "emits files and directories with full path")
+	flag.BoolVar(&config.Fullpath, "f", true, "emits files and directories with full path")
+
+	flag.BoolVar(&config.Nofullpath, "nofullpath", false, "emits files and directories without full path")
+
 	nocolorEnv := os.Getenv("NO_COLOR")
 
 	flag.Parse()
@@ -111,7 +116,7 @@ func realMain() int {
 			// read line from stdin using newline as separator
 			line := scanner.Text()
 
-			//append the line to a slice
+			// append the line to a slice
 			lines = append(lines, line)
 		}
 		ignoreLines = strings.Join(lines, "\n")
@@ -122,15 +127,12 @@ func realMain() int {
 			fmt.Printf("ignorelines: \n%s\n\n", ignoreLines)
 		}
 
-	} else {
+	} else if config.Ignorefile == "" {
+		config.Ignorefile = path + "/.dockerignore"
 
-		if config.Ignorefile == "" {
-			config.Ignorefile = path + "/.dockerignore"
-
-			if debug {
-				fmt.Println("path: ", path)
-				fmt.Println("ignoreFile: ", config.Ignorefile)
-			}
+		if debug {
+			fmt.Println("path: ", path)
+			fmt.Println("ignoreFile: ", config.Ignorefile)
 		}
 	}
 
@@ -155,6 +157,8 @@ func realMain() int {
 		fmt.Println("verbose: ", config.Verbose)
 		fmt.Println("excluded: ", config.Excluded)
 		fmt.Println("included: ", config.Included)
+		fmt.Println("fullpath: ", config.Fullpath)
+		fmt.Println("nofullpath: ", config.Nofullpath)
 		fmt.Println("tail: ", flag.Args())
 		fmt.Println("ENV: ", nocolorEnv)
 	}
@@ -179,9 +183,11 @@ func realMain() int {
 	}
 
 	if config.Invertcolors {
-		tmpColor := ignoredColor
-		ignoredColor = includedColor
-		includedColor = tmpColor
+		ignoredColor, includedColor = includedColor, ignoredColor
+	}
+
+	if config.Nofullpath {
+		config.Fullpath = false
 	}
 
 	var err error
@@ -201,10 +207,8 @@ func realMain() int {
 			ownIgnoreObject = ignore.CompileIgnoreLines([]string{}...)
 		}
 
-	} else {
-		if debug {
-			fmt.Println("No stevedore ignorefile found")
-		}
+	} else if debug {
+		fmt.Println("No stevedore ignorefile found")
 	}
 
 	err = filepath.Walk(path, func(path string, info fs.FileInfo, err error) error {
@@ -224,15 +228,23 @@ func realMain() int {
 			return nil
 		}
 
+		var entry string
+
+		if config.Fullpath {
+			entry = path
+		} else {
+			entry = info.Name()
+		}
+
 		if ignoreObject.MatchesPath(path) {
 			if config.Excluded {
 				if config.Color {
 					color.Set(ignoredColor)
 				}
 				if config.Verbose {
-					fmt.Printf("path %s ignored and is not included in Docker image\n", info.Name())
+					fmt.Printf("path %s ignored and is not included in Docker image\n", entry)
 				} else {
-					fmt.Printf("%s\n", info.Name())
+					fmt.Printf("%s\n", entry)
 				}
 				color.Unset()
 			}
@@ -242,9 +254,9 @@ func realMain() int {
 					color.Set(includedColor)
 				}
 				if config.Verbose {
-					fmt.Printf("path %s not ignored and is included in Docker image\n", info.Name())
+					fmt.Printf("path %s not ignored and is included in Docker image\n", entry)
 				} else {
-					fmt.Printf("%s\n", info.Name())
+					fmt.Printf("%s\n", entry)
 				}
 				color.Unset()
 			}
