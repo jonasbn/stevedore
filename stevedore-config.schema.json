@@ -45,7 +45,6 @@
           "description": "disable full path of encountered files and directories",
           "type": "boolean"
         }
-
       },
       "required": []
 }
