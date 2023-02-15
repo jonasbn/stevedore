@@ -250,6 +250,13 @@ func realMain() int {
 			}
 		} else {
 			if config.Included {
+				if path == "." {
+					if config.Verbose {
+						fmt.Printf("%s is ignored, but traversed by stevedore by default\n", entry)
+					}
+					return nil
+				}
+
 				if config.Color {
 					color.Set(includedColor)
 				}
