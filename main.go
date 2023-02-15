@@ -236,6 +236,13 @@ func realMain() int {
 			entry = info.Name()
 		}
 
+		if path == "." {
+			if config.Verbose {
+				fmt.Printf("%s is ignored, but traversed by stevedore by default\n", entry)
+			}
+			return nil
+		}
+
 		if ignoreObject.MatchesPath(path) {
 			if config.Excluded {
 				if config.Color {
@@ -250,13 +257,6 @@ func realMain() int {
 			}
 		} else {
 			if config.Included {
-				if path == "." {
-					if config.Verbose {
-						fmt.Printf("%s is ignored, but traversed by stevedore by default\n", entry)
-					}
-					return nil
-				}
-
 				if config.Color {
 					color.Set(includedColor)
 				}
