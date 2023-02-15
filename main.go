@@ -222,6 +222,14 @@ func realMain() int {
 			}
 		} else {
 			if included {
+
+				if path == "." {
+					if verbose {
+						fmt.Printf("%s is ignored, but traversed by stevedore by default\n", entry)
+					}
+					return nil
+				}
+
 				if colorOutput {
 					color.Set(includedColor)
 				}
