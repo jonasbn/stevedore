@@ -1,5 +1,9 @@
 # Change log for stevedore
 
+## 0.8.0 2023-02-17 feature release, update not required
+
+- `.` was included in the ignore pattern output, which does not really make sense, so it has been eliminated from the output. It is not super solution since it is no so flexible, but it will have to do for now, ref: [#19](https://github.com/jonasbn/stevedore/issues/19)
+
 ## 0.7.0 2023-02-07 feature release, update not required
 
 - Improved output so both full path and flattened list is available
