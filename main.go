@@ -22,16 +22,16 @@ var (
 )
 
 type config struct {
-	Verbose      bool
-	Debug        bool
 	Color        bool
-	Nocolor      bool
-	Ignorefile   string
+	Debug        bool
 	Excluded     bool
+	Fullpath     bool
+	Ignorefile   string
 	Included     bool
 	Invertcolors bool
-	Fullpath     bool
+	Nocolor      bool
 	Nofullpath   bool
+	Verbose      bool
 }
 
 // main function is a wrapper on the realMain function and emits OS exit code based on wrapped function

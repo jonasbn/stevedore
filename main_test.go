@@ -18,13 +18,15 @@ func TestArguments(T *testing.T) {
 	}{
 		{"no arguments", []string{""}, 0},
 		{"single path argument", []string{"."}, 0},
-		{"verbose argument", []string{"--verbose"}, 0},
 		{"color argument", []string{"--color"}, 0},
-		{"excluded argument", []string{"--excluded"}, 0},
-		{"included argument", []string{"--included"}, 0},
-		{"nocolor argument", []string{"--nocolor"}, 0},
-		{"invertcolors argument", []string{"--invertcolors"}, 0},
 		{"debug argument", []string{"--debug"}, 0},
+		{"excluded argument", []string{"--excluded"}, 0},
+		{"fullpath argument", []string{"--fullpath"}, 0},
+		{"included argument", []string{"--included"}, 0},
+		{"invertcolors argument", []string{"--invertcolors"}, 0},
+		{"nocolor argument", []string{"--nocolor"}, 0},
+		{"nofillpath argument", []string{"--nofullpath"}, 0},
+		{"verbose argument", []string{"--verbose"}, 0},
 	}
 
 	for _, tc := range cases {
