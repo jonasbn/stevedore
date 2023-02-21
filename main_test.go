@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestArguments(T *testing.T) {
+func TestArguments(t *testing.T) {
 	// We manipuate the Args to set them up for the testcases
 	// After this test we restore the initial args
 	oldArgs := os.Args
@@ -34,7 +34,7 @@ func TestArguments(T *testing.T) {
 		os.Args = append([]string{tc.Name}, tc.Args...)
 		actualExit := realMain()
 		if tc.ExpectedExit != actualExit {
-			T.Errorf("Wrong exit code for args: %v, expected: %v, got: %v",
+			t.Errorf("Wrong exit code for args: %v, expected: %v, got: %v",
 				tc.Args, tc.ExpectedExit, actualExit)
 		}
 	}
