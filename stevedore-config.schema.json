@@ -1,0 +1,50 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://github.com/jonasbn/stevedore/stevedore-config.schema.json",
+    "title": "stevedore-config",
+    "description": "Configuration for stevedore",
+    "type": "object",
+    "properties": {
+        "ignorefile": {
+          "description": "path to a global ignore file",
+          "type": "string"
+        },
+        "exclusion": {
+          "description": "enable exclusion output",
+          "type": "boolean"
+        },
+        "inclusion": {
+          "description": "enable inclusion output",
+          "type": "boolean"
+        },
+        "colors": {
+          "description": "color palette",
+          "type": "string"
+        },
+        "color output": {
+          "description": "enabled colorized output",
+          "type": "boolean"
+        },
+        "color inversion": {
+          "description": "invert the colorized output",
+          "type": "boolean"
+        },
+        "verbosity": {
+          "description": "enable verbose output",
+          "type": "boolean"
+        },
+        "debug": {
+          "description": "enable debug output",
+          "type": "boolean"
+        },
+        "fullpath": {
+          "description": "enable full path of encountered files and directories",
+          "type": "boolean"
+        },
+        "nofullpath": {
+          "description": "disable full path of encountered files and directories",
+          "type": "boolean"
+        }
+      },
+      "required": []
+}
