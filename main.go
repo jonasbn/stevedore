@@ -7,7 +7,6 @@ import (
 	"flag"
 	"fmt"
 	"io/fs"
-	"log"
 	"os"
 	"path/filepath"
 	"strings"
@@ -172,7 +171,7 @@ func realMain() int {
 		ignoreObject, err = ignore.CompileIgnoreFile(config.Ignorefile)
 
 		if err != nil {
-			log.Fatalf("unable to read %s file", config.Ignorefile)
+			fmt.Printf("unable to read %s file", config.Ignorefile)
 			return 1
 		}
 	}
