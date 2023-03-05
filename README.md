@@ -105,8 +105,6 @@ Parameters not available for configuration:
 
 - `--help`
 - `--stdin`
-- `--nocolor` set `color output` to `false`
-- `--nofullpath` set `fullpath` to `false`
 
 ## Return Values
 
