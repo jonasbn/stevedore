@@ -40,9 +40,6 @@ func TestArguments(t *testing.T) {
 	}
 }
 
-/* TODO: fix this test
-         we need to generate example directories on the fly
-		 since we cannot add these to the repository
 func TestFails(t *testing.T) {
 	// We manipulate the Args to set them up for the testcases
 	// After this test we restore the initial args
@@ -57,6 +54,18 @@ func TestFails(t *testing.T) {
 		{"unreadable ignorefile", []string{"--verbose", "tests/unable_to_read_dockerignore"}, 1},
 	}
 
+	err := os.MkdirAll("tests/unable_to_read_dockerignore", 0755)
+	check(err)
+
+	createEmptyTestFile := func(name string) {
+		d := []byte("")
+		check(os.WriteFile(name, d, 0333))
+	}
+
+	createEmptyTestFile("tests/unable_to_read_dockerignore/.dockerignore")
+
+	defer os.RemoveAll("tests")
+
 	for _, tc := range cases {
 		// we need a value to set Args[0] to cause flag begins parsing at Args[1]
 		os.Args = append([]string{tc.Name}, tc.Args...)
@@ -66,7 +75,7 @@ func TestFails(t *testing.T) {
 				tc.Args, tc.ExpectedExit, actualExit)
 		}
 	}
-} */
+}
 
 func TestConfig(t *testing.T) {
 	// We manipulate the Args to set them up for the testcases
@@ -82,6 +91,18 @@ func TestConfig(t *testing.T) {
 		{"basic config", []string{"--verbose", "tests/ok"}, 0},
 	}
 
+	err := os.MkdirAll("tests/ok", 0755)
+	check(err)
+
+	createEmptyTestFile := func(name string) {
+		d := []byte("")
+		check(os.WriteFile(name, d, 0644))
+	}
+
+	createEmptyTestFile("tests/ok/.dockerignore")
+
+	defer os.RemoveAll("tests")
+
 	for _, tc := range cases {
 		// we need a value to set Args[0] to cause flag begins parsing at Args[1]
 		os.Args = append([]string{tc.Name}, tc.Args...)
@@ -90,5 +111,15 @@ func TestConfig(t *testing.T) {
 			t.Errorf("Wrong exit code for args: %v, expected: %v, got: %v",
 				tc.Args, tc.ExpectedExit, actualExit)
 		}
+	}
+}
+
+func setupTestDirectories() {
+
+}
+
+func check(e error) {
+	if e != nil {
+		panic(e)
 	}
 }
