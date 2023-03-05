@@ -6,7 +6,7 @@ import (
 )
 
 func TestArguments(t *testing.T) {
-	// We manipuate the Args to set them up for the testcases
+	// We manipulate the Args to set them up for the testcases
 	// After this test we restore the initial args
 	oldArgs := os.Args
 	defer func() { os.Args = oldArgs }()
@@ -27,6 +27,59 @@ func TestArguments(t *testing.T) {
 		{"nocolor argument", []string{"--nocolor"}, 0},
 		{"nofillpath argument", []string{"--nofullpath"}, 0},
 		{"verbose argument", []string{"--verbose"}, 0},
+	}
+
+	for _, tc := range cases {
+		// we need a value to set Args[0] to cause flag begins parsing at Args[1]
+		os.Args = append([]string{tc.Name}, tc.Args...)
+		actualExit := realMain()
+		if tc.ExpectedExit != actualExit {
+			t.Errorf("Wrong exit code for args: %v, expected: %v, got: %v",
+				tc.Args, tc.ExpectedExit, actualExit)
+		}
+	}
+}
+
+/* TODO: fix this test
+         we need to generate example directories on the fly
+		 since we cannot add these to the repository
+func TestFails(t *testing.T) {
+	// We manipulate the Args to set them up for the testcases
+	// After this test we restore the initial args
+	oldArgs := os.Args
+	defer func() { os.Args = oldArgs }()
+
+	cases := []struct {
+		Name         string
+		Args         []string
+		ExpectedExit int
+	}{
+		{"unreadable ignorefile", []string{"--verbose", "tests/unable_to_read_dockerignore"}, 1},
+	}
+
+	for _, tc := range cases {
+		// we need a value to set Args[0] to cause flag begins parsing at Args[1]
+		os.Args = append([]string{tc.Name}, tc.Args...)
+		actualExit := realMain()
+		if tc.ExpectedExit != actualExit {
+			t.Errorf("Wrong exit code for args: %v, expected: %v, got: %v",
+				tc.Args, tc.ExpectedExit, actualExit)
+		}
+	}
+} */
+
+func TestConfig(t *testing.T) {
+	// We manipulate the Args to set them up for the testcases
+	// After this test we restore the initial args
+	oldArgs := os.Args
+	defer func() { os.Args = oldArgs }()
+
+	cases := []struct {
+		Name         string
+		Args         []string
+		ExpectedExit int
+	}{
+		{"basic config", []string{"--verbose", "tests/ok"}, 0},
 	}
 
 	for _, tc := range cases {

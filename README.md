@@ -81,6 +81,33 @@ Or you can pass it in via STDIN:
 
 These will render the same result.
 
+## Configuration
+
+If you find yourself constantly writing out the same command line parameters, you can create a local configuration file: `.stevedore.json`
+
+You can specify the setting for all command line arguments, but with a JSON key/value structure:
+
+```json
+{
+    "$schema": "stevedore-config.schema.json",
+    "color": true,
+    "debug": false,
+    "excluded": false,
+    "fullpath": true,
+    "ignorefile": ".stevedoreignore",
+    "included": false,
+    "invertcolor": false,
+    "verbose": false
+}
+```
+
+Parameters not available for configuration:
+
+- `--help`
+- `--stdin`
+- `--nocolor` set `color output` to `false`
+- `--nofullpath` set `fullpath` to `false`
+
 ## Return Values
 
 - `0` indicates a successful run

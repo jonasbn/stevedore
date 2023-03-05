@@ -1,0 +1,4 @@
+{
+  "$schema": "stevedore-config.schema.json",
+  "debug": false
+}

@@ -9,27 +9,23 @@
           "description": "path to a global ignore file",
           "type": "string"
         },
-        "exclusion": {
+        "excluded": {
           "description": "enable exclusion output",
           "type": "boolean"
         },
-        "inclusion": {
+        "included": {
           "description": "enable inclusion output",
           "type": "boolean"
         },
-        "colors": {
-          "description": "color palette",
-          "type": "string"
-        },
-        "color output": {
+        "color": {
           "description": "enabled colorized output",
           "type": "boolean"
         },
-        "color inversion": {
+        "invertedcolor": {
           "description": "invert the colorized output",
           "type": "boolean"
         },
-        "verbosity": {
+        "verbose": {
           "description": "enable verbose output",
           "type": "boolean"
         },
@@ -39,10 +35,6 @@
         },
         "fullpath": {
           "description": "enable full path of encountered files and directories",
-          "type": "boolean"
-        },
-        "nofullpath": {
-          "description": "disable full path of encountered files and directories",
           "type": "boolean"
         }
       },
