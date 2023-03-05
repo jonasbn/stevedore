@@ -114,10 +114,6 @@ func TestConfig(t *testing.T) {
 	}
 }
 
-func setupTestDirectories() {
-
-}
-
 func check(e error) {
 	if e != nil {
 		panic(e)
