@@ -206,7 +206,7 @@ func realMain() int {
 		ignoreObject, err = ignore.CompileIgnoreFile(config.Ignorefile)
 
 		if err != nil {
-			fmt.Printf("unable to read %s file", config.Ignorefile)
+			fmt.Printf("unable to read %s file\n", config.Ignorefile)
 			return 1
 		}
 	}
@@ -324,35 +324,26 @@ func loadConfigFile(configFile string, config *Config) (rv bool, err error) {
 
 		jsonData, err := os.ReadFile(configFile)
 
-		if json.Valid([]byte(jsonData)) {
+		if err != nil {
+			return false, err
+		}
 
-			if err != nil {
-				fmt.Printf("unable to read %s file, ignoring - %v\n", configFile, err)
-			}
+		err = json.Unmarshal(jsonData, &config)
+		if err != nil {
+			return false, err
+		}
 
-			err = json.Unmarshal(jsonData, &config)
-			if err != nil {
-				fmt.Println("error unmarshalling JSON configuration:", err)
-			}
-
-			if err != nil {
-				return false, err
-			}
-
-			if config.Debug {
-				fmt.Println("Config file:")
-				fmt.Println("\tcolor: ", config.Color)
-				fmt.Println("\tnocolor: ", config.Nocolor)
-				fmt.Println("\tignorefile: ", config.Ignorefile)
-				fmt.Println("\tdebug: ", config.Debug)
-				fmt.Println("\tverbose: ", config.Verbose)
-				fmt.Println("\texcluded: ", config.Excluded)
-				fmt.Println("\tincluded: ", config.Included)
-				fmt.Println("\tfullpath: ", config.Fullpath)
-				fmt.Println("\tnofullpath: ", config.Nofullpath)
-			}
-		} else {
-			return false, fmt.Errorf("Config file %s does not contain valid JSON", configFile)
+		if config.Debug {
+			fmt.Println("Config file:")
+			fmt.Println("\tcolor: ", config.Color)
+			fmt.Println("\tnocolor: ", config.Nocolor)
+			fmt.Println("\tignorefile: ", config.Ignorefile)
+			fmt.Println("\tdebug: ", config.Debug)
+			fmt.Println("\tverbose: ", config.Verbose)
+			fmt.Println("\texcluded: ", config.Excluded)
+			fmt.Println("\tincluded: ", config.Included)
+			fmt.Println("\tfullpath: ", config.Fullpath)
+			fmt.Println("\tnofullpath: ", config.Nofullpath)
 		}
 	} else {
 		return false, fmt.Errorf("Config file %s not found", configFile)
