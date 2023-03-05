@@ -8,3 +8,4 @@ STDIN
 stdin
 fullpath
 nofullpath
+JSON
