@@ -106,13 +106,13 @@ func realMain() int {
 		switch {
 		case f.Name == "debug":
 			config.Debug = true
-		case f.Name == "color":
+		case f.Name == "color" || f.Name == "c":
 			config.Color = true
 			config.Nocolor = false
-		case f.Name == "nocolor":
+		case f.Name == "nocolor" || f.Name == "n":
 			config.Nocolor = true
 			config.Color = false
-		case f.Name == "ignorefile":
+		case f.Name == "ignorefile" || f.Name == "i":
 			config.Ignorefile = ignorefile
 		case f.Name == "excluded":
 			config.Excluded = true
@@ -120,13 +120,13 @@ func realMain() int {
 			config.Included = true
 		case f.Name == "invertcolors":
 			config.Invertcolors = true
-		case f.Name == "fullpath":
+		case f.Name == "fullpath" || f.Name == "f":
 			config.Fullpath = true
 			config.Nofullpath = false
 		case f.Name == "nofullpath":
 			config.Nofullpath = true
 			config.Fullpath = false
-		case f.Name == "verbose":
+		case f.Name == "verbose" || f.Name == "v":
 			config.Verbose = true
 		default:
 			fmt.Printf("No special handling of this command line flag %s.\n", f.Name)
