@@ -21,7 +21,7 @@
           "description": "enabled colorized output",
           "type": "boolean"
         },
-        "invertedcolor": {
+        "invertcolors": {
           "description": "invert the colorized output",
           "type": "boolean"
         },
