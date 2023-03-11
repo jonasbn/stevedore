@@ -141,6 +141,12 @@ The `.stevedoreignore` file follows the general implementation pattern. and exam
 - [Git ignore][GITIGNORE]
 - [Go gitignore][GO-GITIGNORE]
 - [Yak ignore][YAKIGNORE]
+- [Background image by photographer Josh Young](https://unsplash.com/photos/Huv8EWe2Vo8)
+
+## License and Copyright
+
+- stevedore command line utility is copyright by jonasbn
+- The background image used on the stevedore [website](https://jonasbn.github.io/stevedore/) is copyright by [Josh Young](https://unsplash.com/@joshalexyoung) and is used under the [Unsplash license](https://unsplash.com/license)
 
 [WIKIPEDIA]: https://en.wikipedia.org/wiki/Stevedore
 [GO-GITIGNORE]: https://pkg.go.dev/github.com/sabhiram/go-gitignore

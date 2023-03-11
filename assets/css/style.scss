@@ -1,0 +1,54 @@
+---
+---
+
+@import "{{ site.theme }}";
+@import url(https://fonts.googleapis.com/css?family=Noto+Sans);
+
+body {
+    background-image: url('../josh-young-Huv8EWe2Vo8-unsplash.jpg');
+    color: #fff;
+    padding: 5px;
+    backdrop-filter: brightness(80%);
+}
+
+.footer a {
+    color: #fff;
+}
+
+img {
+    filter: brightness(40%);
+}
+
+.markdown-body {
+    background-color: rgba(#111,0.7);
+    border-color: rgba(255,255,255,0.2);
+}
+
+pre {
+    color: grey;
+}
+
+h1, h2, h3, h4, h5, h6, p, li, a {
+    font-family: "Noto Sans";
+}
+
+a {
+    border-bottom: 1px solid #fff;
+}
+
+a:hover {
+    text-decoration: bold;
+}
+
+a:visited {
+    text-decoration: none;
+    color: lightgrey;
+}
+
+.text-gray {
+    color: #fff !important;
+}
+
+.anchorjs-link {
+    color: #fff !important;
+}
