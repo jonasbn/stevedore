@@ -145,7 +145,7 @@ The `.stevedoreignore` file follows the general implementation pattern. and exam
 
 ## License and Copyright
 
-- stevedore command line utility is copyright by jonasbn
+- stevedore command line utility is copyright by jonasbn under a MIT license
 - The background image used on the stevedore [website](https://jonasbn.github.io/stevedore/) is copyright by [Josh Young](https://unsplash.com/@joshalexyoung) and is used under the [Unsplash license](https://unsplash.com/license)
 
 [WIKIPEDIA]: https://en.wikipedia.org/wiki/Stevedore
