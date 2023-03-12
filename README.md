@@ -49,6 +49,18 @@ Since this is just an analysis/reporting tool it can be fed with parameters to d
 - `--stdin` / `-s` reads ignore file from STDIN
 - `--fullpath` / `-f` emits full path of encountered files and directories
 
+Precedence for configuration of parameters are:
+
+- Global configuration file
+- Local configuration file
+- Command line parameters
+
+Use the global configuration file for the configuration you prefer for all you projects and invocations.
+
+Add a local configuration file, where you want to continuously override the global configuration for that particular directory and for all your invocations.
+
+See Configuration section for details on configuration.
+
 ### Verbosity
 
 If the verbose flag is set the output is altered and is more explanatory:
@@ -83,9 +95,12 @@ These will render the same result.
 
 ## Configuration
 
-If you find yourself constantly writing out the same command line parameters, you can create a local configuration file: `.stevedore.json`
+If you find yourself constantly writing out the same command line parameters, you have several options for for using a configuration file:
 
-You can specify the setting for all command line arguments, but with a JSON key/value structure:
+1. You can configure per project/repository, by having a file named `.stevedore.json`
+2. You can specify a file in `$HOME/.config/stevedore/config.json`
+
+You can in either file specify the setting for all command line arguments, with a JSON key/value structure:
 
 ```json
 {
@@ -106,6 +121,20 @@ Parameters not available for configuration:
 - `--help`
 - `--stdin`
 
+Precedence for the configuration files are:
+
+- Global configuration file
+- Local configuration file
+- Command line parameters
+
+Use the global configuration file for the configuration you prefer for all you projects and invocations.
+
+Add a local configuration file, where you want to continuously override the global configuration for that particular directory and for all your invocations.
+
+See also Configuration for more details.
+
+See Parameters section for details on parameters.
+
 ## Return Values
 
 - `0` indicates a successful run
@@ -124,6 +153,21 @@ The `.stevedoreignore` file follows the general implementation pattern. and exam
 .git
 ```
 
+## Environment
+
+`stevedore` support locating a configuration file in:
+
+- `$HOME/.config/stevedore`
+- Named: `config.json`
+
+The directory can be specified using the environment variable:
+
+`$XDG_CONFIG_HOME`, the default is: `$HOME/.config`. If the environment variable is not set, the default is evaluated.
+
+Do note `stevedore` does not support: `$XDG_CONFIG_DIRS`.
+
+See Configuration section for details on configuration.
+
 ## Compatibility
 
 - [Docker ignore][DOCKERIGNORE]: `.dockerignore` (main purpose)
@@ -132,7 +176,12 @@ The `.stevedoreignore` file follows the general implementation pattern. and exam
 
 ## Incompatibility
 
-- `stevedore` does not support following symbolic links in the traversal of directories
+`stevedore` does not support:
+
+- following symbolic links in the traversal of directories, this limitation is imposed by the limitation from the library used for the implementation: [`path/filepath` documentation for `WalkDir` function](https://pkg.go.dev/path/filepath#WalkDir)
+- `$XDG_CONFIG_DIRS` which are part of the "XDG Base Directory Specification" are not supported at this time
+
+See Configuration section for details on configuration.
 
 ## Resources and References
 
@@ -141,6 +190,8 @@ The `.stevedoreignore` file follows the general implementation pattern. and exam
 - [Git ignore][GITIGNORE]
 - [Go gitignore][GO-GITIGNORE]
 - [Yak ignore][YAKIGNORE]
+- [XDG Base Directory Specification](https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html)
+- [`path/filepath` documentation for `WalkDir` function](https://pkg.go.dev/path/filepath#WalkDir)
 - [Background image by photographer Josh Young](https://unsplash.com/photos/Huv8EWe2Vo8)
 
 ## License and Copyright

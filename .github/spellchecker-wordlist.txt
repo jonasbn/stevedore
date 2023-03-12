@@ -11,3 +11,4 @@ nofullpath
 JSON
 jonasbn
 Unsplash
+XDG

@@ -1,4 +1,5 @@
 {
   "$schema": "stevedore-config.schema.json",
-  "debug": false
+  "debug": false,
+  "invertcolors": true
 }
