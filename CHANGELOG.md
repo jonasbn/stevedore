@@ -1,5 +1,14 @@
 # Change log for stevedore
 
+## 0.10.0 2023-03-12 feature release, update not required
+
+- Added support for global configuration file, now both: local and global configuration files are supported
+
+## 0.9.0 2023-03-05 feature release, update not required
+
+- Fix a _bug_, which was disturbing the tests
+- Implemented proper precedence handling between CLI flags and configuration
+
 ## 0.8.0 2023-02-17 feature release, update not required
 
 - `.` was included in the ignore pattern output, which does not really make sense, so it has been eliminated from the output. It is not super solution since it is no so flexible, but it will have to do for now, ref: [#19](https://github.com/jonasbn/stevedore/issues/19)
@@ -7,8 +16,8 @@
 ## 0.7.0 2023-02-07 feature release, update not required
 
 - Improved output so both full path and flattened list is available
-  - full path is the new default, can be explicitly requested using ^--fullpath`
-  - flat structure, can be explicitly requested using ^--nofullpath`
+  - full path is the new default, can be explicitly requested using  `--fullpath`
+  - flat structure, can be explicitly requested using `--nofullpath`
 
 ## 0.6.1 2022-11-22 Bug fix release, update not required
 

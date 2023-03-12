@@ -12,3 +12,4 @@ JSON
 jonasbn
 Unsplash
 XDG
+CLI
