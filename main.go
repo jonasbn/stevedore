@@ -95,8 +95,24 @@ func realMain() int {
 
 	flag.Parse()
 
+	globalConfigDir := os.Getenv("HOME") + "/.config"
+	XDGConfigHome := os.Getenv("XDG_CONFIG_HOME")
+
+	if XDGConfigHome != "" {
+		globalConfigDir = XDGConfigHome
+	}
+
+	stevedoreGlobalConfigDir := globalConfigDir + "/stevedore/"
+
+	globalConfigFile := stevedoreGlobalConfigDir + "config.json"
+	_, err := loadGlobalConfigFile(globalConfigFile, &config)
+
+	if err != nil {
+		fmt.Printf("Error attempting to read global configuration file: %s, continuing...\n", err)
+	}
+
 	configFile := ".stevedore.json"
-	_, err := loadConfigFile(configFile, &config)
+	_, err = loadLocalConfigFile(configFile, &config)
 
 	if err != nil {
 		fmt.Printf("Error attempting to read configuration file: %s, continuing...\n", err)
@@ -318,7 +334,41 @@ func realMain() int {
 	return 0
 }
 
-func loadConfigFile(configFile string, config *Config) (rv bool, err error) {
+func loadGlobalConfigFile(configFile string, config *Config) (rv bool, err error) {
+
+	if _, err := os.Stat(configFile); !errors.Is(err, fs.ErrNotExist) {
+
+		jsonData, err := os.ReadFile(configFile)
+
+		if err != nil {
+			return false, err
+		}
+
+		err = json.Unmarshal(jsonData, &config)
+		if err != nil {
+			return false, err
+		}
+
+		if config.Debug {
+			fmt.Println("Config file:")
+			fmt.Println("\tcolor: ", config.Color)
+			fmt.Println("\tnocolor: ", config.Nocolor)
+			fmt.Println("\tignorefile: ", config.Ignorefile)
+			fmt.Println("\tdebug: ", config.Debug)
+			fmt.Println("\tverbose: ", config.Verbose)
+			fmt.Println("\texcluded: ", config.Excluded)
+			fmt.Println("\tincluded: ", config.Included)
+			fmt.Println("\tfullpath: ", config.Fullpath)
+			fmt.Println("\tnofullpath: ", config.Nofullpath)
+		}
+	} else {
+		return false, fmt.Errorf("Config file %s not found", configFile)
+	}
+
+	return true, nil
+}
+
+func loadLocalConfigFile(configFile string, config *Config) (rv bool, err error) {
 
 	if _, err := os.Stat(configFile); !errors.Is(err, fs.ErrNotExist) {
 

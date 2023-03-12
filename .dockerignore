@@ -1,2 +1,15 @@
 .git
 main.go
+_site
+assets
+cover.out
+dictionary.dic
+examples
+staticcheck.conf
+stevedore-config.schema.json
+stevedore.code-workspace
+.github
+Gemfile
+Gemfile.lock
+.in
+README.md
