@@ -155,6 +155,23 @@ The `.stevedoreignore` file follows the general implementation pattern. and exam
 
 ## Environment
 
+### Support for color output via environment variable
+
+stevedore supports color output, color output can be suppressed by setting  the environment variable `$NO_COLOR`.
+
+The command line parameter `--color` and `--nocolor` overrides the environment variable.
+
+The configurations from either:
+
+- `.stevedore.json` local configuration file
+- `$HOME/.config/stevedore/config.json` global configuration file
+
+Also overrides the environment variable.
+
+For more information on for the environment variable `$NO_COLOR` see: [no-color.org][NOCOLOR].
+
+### Configuration via environment variables
+
 `stevedore` support locating a configuration file in:
 
 - `$HOME/.config/stevedore`
@@ -193,6 +210,7 @@ See Configuration section for details on configuration.
 - [XDG Base Directory Specification](https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html)
 - [`path/filepath` documentation for `WalkDir` function](https://pkg.go.dev/path/filepath#WalkDir)
 - [Background image by photographer Josh Young](https://unsplash.com/photos/Huv8EWe2Vo8)
+- [NO_COLOR website][NOCOLOR]
 
 ## License and Copyright
 
@@ -204,3 +222,4 @@ See Configuration section for details on configuration.
 [GITIGNORE]: https://git-scm.com/docs/gitignore
 [DOCKERIGNORE]: https://docs.docker.com/engine/reference/builder/#dockerignore-file
 [YAKIGNORE]: https://jonasbn.github.io/yak/
+[NOCOLOR]: https://no-color.org/

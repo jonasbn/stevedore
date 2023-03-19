@@ -31,12 +31,13 @@ type Config struct {
 	Nocolor      bool
 	Nofullpath   bool
 	Verbose      bool
+	Stdin        bool
 }
 
-func (c *Config) fillDefaults() {
+func (s *Config) fillDefaults() {
 
-	c.Color = true
-	c.Fullpath = true
+	s.Color = true
+	s.Fullpath = true
 }
 
 // main function is a wrapper on the realMain function and emits OS exit code based on wrapped function
@@ -47,76 +48,14 @@ func main() {
 func realMain() int {
 
 	var config Config
-	config.fillDefaults()
 
-	flag.CommandLine = flag.NewFlagSet(os.Args[0], flag.ExitOnError)
+	var flags Config
 
-	var verbose bool
-	flag.BoolVar(&verbose, "verbose", config.Verbose, "emit verbose output")
-	flag.BoolVar(&verbose, "v", config.Verbose, "emit verbose output")
+	var settings Config
+	settings.fillDefaults()
 
-	var debug bool
-	flag.BoolVar(&debug, "debug", config.Debug, "emit debug messages")
-
-	var stdin bool
-	flag.BoolVar(&stdin, "stdin", false, "read from ignore file from STDIN")
-	flag.BoolVar(&stdin, "s", false, "read from ignore file from STDIN")
-
-	var color bool
-	flag.BoolVar(&color, "color", config.Color, "enable colors")
-	flag.BoolVar(&color, "c", config.Color, "enable colors")
-
-	var nocolor bool
-	flag.BoolVar(&nocolor, "nocolor", config.Nocolor, "disable use of colors")
-	flag.BoolVar(&nocolor, "n", config.Nocolor, "disable use of colors")
-
-	var ignorefile string
-	flag.StringVar(&ignorefile, "ignorefile", "", "a path to an specific ignore file")
-	flag.StringVar(&ignorefile, "i", "", "a path to an specific ignore file")
-
-	var excluded bool
-	flag.BoolVar(&excluded, "excluded", config.Excluded, "only output excluded files")
-	flag.BoolVar(&excluded, "x", config.Excluded, "only output excluded files")
-
-	var included bool
-	flag.BoolVar(&included, "included", config.Included, "only output included files")
-
-	var invertcolors bool
-	flag.BoolVar(&invertcolors, "invertcolors", config.Invertcolors, "inverts the used color")
-
-	var fullpath bool
-	flag.BoolVar(&fullpath, "fullpath", config.Fullpath, "emits files and directories with full path")
-	flag.BoolVar(&fullpath, "f", config.Fullpath, "emits files and directories with full path")
-
-	var nofullpath bool
-	flag.BoolVar(&nofullpath, "nofullpath", config.Nofullpath, "emits files and directories without full path")
-
-	nocolorEnv := os.Getenv("NO_COLOR")
-
-	flag.Parse()
-
-	globalConfigDir := os.Getenv("HOME") + "/.config"
-	XDGConfigHome := os.Getenv("XDG_CONFIG_HOME")
-
-	if XDGConfigHome != "" {
-		globalConfigDir = XDGConfigHome
-	}
-
-	stevedoreGlobalConfigDir := globalConfigDir + "/stevedore/"
-
-	globalConfigFile := stevedoreGlobalConfigDir + "config.json"
-	_, err := loadGlobalConfigFile(globalConfigFile, &config)
-
-	if err != nil {
-		fmt.Printf("Error attempting to read global configuration file: %s, continuing...\n", err)
-	}
-
-	configFile := ".stevedore.json"
-	_, err = loadLocalConfigFile(configFile, &config)
-
-	if err != nil {
-		fmt.Printf("Error attempting to read configuration file: %s, continuing...\n", err)
-	}
+	parseFlags(&flags, &settings)
+	parseConfig(&config)
 
 	markFlags := func(f *flag.Flag) {
 		switch {
@@ -129,7 +68,7 @@ func realMain() int {
 			config.Nocolor = true
 			config.Color = false
 		case f.Name == "ignorefile" || f.Name == "i":
-			config.Ignorefile = ignorefile
+			config.Ignorefile = settings.Ignorefile
 		case f.Name == "excluded":
 			config.Excluded = true
 		case f.Name == "included":
@@ -150,15 +89,24 @@ func realMain() int {
 	}
 	flag.Visit(markFlags)
 
+	resolveSettings(&flags, &config, &settings)
+
 	path := flag.Arg(0)
 
 	if path == "" {
 		path = "."
 	}
 
+	nocolorEnv := resolveEnvNocolor()
+
+	if nocolorEnv {
+		config.Color = false
+		config.Invertcolors = false
+	}
+
 	var ignoreLines string
 
-	if stdin {
+	if settings.Stdin {
 		scanner := bufio.NewScanner(os.Stdin)
 
 		var lines []string
@@ -171,77 +119,78 @@ func realMain() int {
 		}
 		ignoreLines = strings.Join(lines, "\n")
 
-		if config.Debug {
+		if settings.Debug {
 			fmt.Println("path: ", path)
 			fmt.Println("ignore string from STDIN")
 			fmt.Printf("ignorelines: \n%s\n\n", ignoreLines)
 		}
 
-	} else if config.Ignorefile == "" {
-		config.Ignorefile = path + "/.dockerignore"
+	} else if settings.Ignorefile == "" {
+		settings.Ignorefile = path + "/.dockerignore"
 
-		if config.Debug {
+		if settings.Debug {
 			fmt.Println("path: ", path)
 			fmt.Println("ignoreFile: ", config.Ignorefile)
 		}
 	}
 
-	if config.Included && config.Excluded {
-		config.Included = false
-		config.Excluded = false
-	} else if !config.Included && !config.Excluded {
-		config.Included = true
-		config.Excluded = true
+	if settings.Included && settings.Excluded {
+		settings.Included = false
+		settings.Excluded = false
+	} else if !settings.Included && !settings.Excluded {
+		settings.Included = true
+		settings.Excluded = true
 	}
 
-	if config.Debug {
+	if settings.Debug {
 		fmt.Println("CLI flags:")
-		fmt.Println("\tcolor: ", color)
-		fmt.Println("\tnocolor: ", nocolor)
-		fmt.Println("\tignorefile: ", ignorefile)
-		fmt.Println("\tdebug: ", debug)
-		fmt.Println("\tverbose: ", verbose)
-		fmt.Println("\texcluded: ", excluded)
-		fmt.Println("\tincluded: ", included)
-		fmt.Println("\tfullpath: ", fullpath)
-		fmt.Println("\tnofullpath: ", nofullpath)
+		fmt.Println("\tcolor: ", flags.Color)
+		fmt.Println("\tnocolor: ", flags.Nocolor)
+		fmt.Println("\tignorefile: ", flags.Ignorefile)
+		fmt.Println("\tdebug: ", flags.Debug)
+		fmt.Println("\tverbose: ", flags.Verbose)
+		fmt.Println("\texcluded: ", flags.Excluded)
+		fmt.Println("\tincluded: ", flags.Included)
+		fmt.Println("\tfullpath: ", flags.Fullpath)
+		fmt.Println("\tnofullpath: ", flags.Nofullpath)
 		fmt.Println("\ttail: ", flag.Args())
 	}
 
-	if config.Debug {
+	if settings.Debug {
 		fmt.Println("Environment Variables")
-		fmt.Println("ENV: ", nocolorEnv)
+		fmt.Println("ENV NO_COLOR: ", nocolorEnv)
 	}
 
+	var err error
 	var ignoreObject = ignore.CompileIgnoreLines([]string{}...)
 
-	if stdin {
+	if settings.Stdin {
 		ignoreObject = ignore.CompileIgnoreLines(ignoreLines)
 	} else {
 
-		ignoreObject, err = ignore.CompileIgnoreFile(config.Ignorefile)
+		ignoreObject, err = ignore.CompileIgnoreFile(settings.Ignorefile)
 
 		if err != nil {
-			fmt.Printf("unable to read %s file\n", config.Ignorefile)
+			fmt.Printf("unable to read %s file\n", settings.Ignorefile)
 			return 1
 		}
 	}
 
-	if config.Color {
-		config.Nocolor = false
+	if settings.Color {
+		settings.Nocolor = false
 	}
 
-	if config.Nocolor || nocolorEnv != "" || nocolorEnv == "1" {
-		config.Color = false
-		config.Invertcolors = false
+	if settings.Nocolor {
+		settings.Color = false
+		settings.Invertcolors = false
 	}
 
-	if config.Invertcolors {
+	if settings.Invertcolors {
 		ignoredColor, includedColor = includedColor, ignoredColor
 	}
 
-	if config.Nofullpath {
-		config.Fullpath = false
+	if settings.Nofullpath {
+		settings.Fullpath = false
 	}
 
 	ownIgnoreFile := ".stevedoreignore"
@@ -259,7 +208,7 @@ func realMain() int {
 			ownIgnoreObject = ignore.CompileIgnoreLines([]string{}...)
 		}
 
-	} else if config.Debug {
+	} else if settings.Debug {
 		fmt.Println("No stevedore ignorefile found")
 	}
 
@@ -269,12 +218,12 @@ func realMain() int {
 			return err
 		}
 		if ownIgnoreObject.MatchesPath(path) && info.IsDir() {
-			if config.Verbose {
+			if settings.Verbose {
 				fmt.Printf("%s have been ignored by stevedore, no traversal\n", info.Name())
 			}
 			return filepath.SkipDir
 		} else if ownIgnoreObject.MatchesPath(path) {
-			if config.Verbose {
+			if settings.Verbose {
 				fmt.Printf("%s have been ignored by stevedore\n", info.Name())
 			}
 			return nil
@@ -282,25 +231,25 @@ func realMain() int {
 
 		var entry string
 
-		if config.Fullpath {
+		if settings.Fullpath {
 			entry = path
 		} else {
 			entry = info.Name()
 		}
 
 		if path == "." {
-			if config.Verbose {
+			if settings.Verbose {
 				fmt.Printf("%s is ignored, but traversed by stevedore by default\n", entry)
 			}
 			return nil
 		}
 
 		if ignoreObject.MatchesPath(path) {
-			if config.Excluded {
-				if config.Color {
+			if settings.Excluded {
+				if settings.Color {
 					colorize.Set(ignoredColor)
 				}
-				if config.Verbose {
+				if settings.Verbose {
 					fmt.Printf("path %s ignored and is not included in Docker image\n", entry)
 				} else {
 					fmt.Printf("%s\n", entry)
@@ -308,11 +257,11 @@ func realMain() int {
 				colorize.Unset()
 			}
 		} else {
-			if config.Included {
-				if config.Color {
+			if settings.Included {
+				if settings.Color {
 					colorize.Set(includedColor)
 				}
-				if config.Verbose {
+				if settings.Verbose {
 					fmt.Printf("path %s not ignored and is included in Docker image\n", entry)
 				} else {
 					fmt.Printf("%s\n", entry)
@@ -321,7 +270,7 @@ func realMain() int {
 			}
 		}
 
-		if config.Debug {
+		if settings.Debug {
 			fmt.Printf("visited file or dir: %q\n", path)
 		}
 		return nil
@@ -334,7 +283,7 @@ func realMain() int {
 	return 0
 }
 
-func loadGlobalConfigFile(configFile string, config *Config) (rv bool, err error) {
+func loadGlobalConfigFile(configFile string, config *Config) (loaded bool, err error) {
 
 	if _, err := os.Stat(configFile); !errors.Is(err, fs.ErrNotExist) {
 
@@ -368,7 +317,7 @@ func loadGlobalConfigFile(configFile string, config *Config) (rv bool, err error
 	return true, nil
 }
 
-func loadLocalConfigFile(configFile string, config *Config) (rv bool, err error) {
+func loadLocalConfigFile(configFile string, config *Config) (loaded bool, err error) {
 
 	if _, err := os.Stat(configFile); !errors.Is(err, fs.ErrNotExist) {
 
@@ -400,4 +349,161 @@ func loadLocalConfigFile(configFile string, config *Config) (rv bool, err error)
 	}
 
 	return true, nil
+}
+
+func resolveEnvNocolor() bool {
+	_, ok := os.LookupEnv("NO_COLOR")
+
+	return ok
+}
+
+func parseFlags(flags *Config, settings *Config) (err error) {
+	flag.CommandLine = flag.NewFlagSet(os.Args[0], flag.ExitOnError)
+
+	flag.BoolVar(&flags.Verbose, "verbose", settings.Verbose, "emit verbose output")
+	flag.BoolVar(&flags.Verbose, "v", settings.Verbose, "emit verbose output")
+
+	flag.BoolVar(&flags.Debug, "debug", settings.Debug, "emit debug messages")
+
+	flag.BoolVar(&flags.Stdin, "stdin", settings.Stdin, "read from ignore file from STDIN")
+	flag.BoolVar(&flags.Stdin, "s", settings.Stdin, "read from ignore file from STDIN")
+
+	flag.BoolVar(&flags.Color, "color", settings.Color, "enable colors")
+	flag.BoolVar(&flags.Color, "c", settings.Color, "enable colors")
+
+	flag.BoolVar(&flags.Nocolor, "nocolor", settings.Nocolor, "disable use of colors")
+	flag.BoolVar(&flags.Nocolor, "n", settings.Nocolor, "disable use of colors")
+
+	flag.StringVar(&flags.Ignorefile, "ignorefile", "", "a path to an specific ignore file")
+	flag.StringVar(&flags.Ignorefile, "i", "", "a path to an specific ignore file")
+
+	flag.BoolVar(&flags.Excluded, "excluded", settings.Excluded, "only output excluded files")
+	flag.BoolVar(&flags.Excluded, "x", settings.Excluded, "only output excluded files")
+
+	flag.BoolVar(&flags.Included, "included", settings.Included, "only output included files")
+
+	flag.BoolVar(&flags.Invertcolors, "invertcolors", settings.Invertcolors, "inverts the used color")
+
+	flag.BoolVar(&flags.Fullpath, "fullpath", settings.Fullpath, "emits files and directories with full path")
+	flag.BoolVar(&flags.Fullpath, "f", settings.Fullpath, "emits files and directories with full path")
+
+	flag.BoolVar(&flags.Nofullpath, "nofullpath", settings.Nofullpath, "emits files and directories without full path")
+
+	flag.Parse()
+
+	return nil
+}
+
+func parseConfig(config *Config) (err error) {
+
+	configFile := ".stevedore.json"
+	loaded, err := loadLocalConfigFile(configFile, config)
+
+	if loaded {
+		return nil
+	}
+
+	if err != nil {
+		fmt.Printf("Error attempting to read configuration file: %s, continuing...\n", err)
+	}
+
+	globalConfigDir := os.Getenv("HOME") + "/.config"
+	XDGConfigHome := os.Getenv("XDG_CONFIG_HOME")
+
+	if XDGConfigHome != "" {
+		globalConfigDir = XDGConfigHome
+	}
+
+	stevedoreGlobalConfigDir := globalConfigDir + "/stevedore/"
+
+	globalConfigFile := stevedoreGlobalConfigDir + "config.json"
+	loaded, err = loadGlobalConfigFile(globalConfigFile, config)
+
+	if loaded {
+		return nil
+	}
+
+	if err != nil {
+		fmt.Printf("Error attempting to read global configuration file: %s, continuing...\n", err)
+	}
+
+	return nil
+}
+
+func resolveSettings(flags *Config, config *Config, settings *Config) (err error) {
+
+	if flags.Verbose {
+		settings.Verbose = true
+	} else {
+		settings.Verbose = config.Verbose
+	}
+
+	if flags.Debug {
+		settings.Debug = true
+	} else {
+		settings.Debug = config.Debug
+	}
+
+	// we do not support STDIN via config file
+	if flags.Stdin {
+		settings.Stdin = true
+	}
+
+	if flags.Color {
+		settings.Color = true
+	} else {
+		if !resolveEnvNocolor() {
+			settings.Color = config.Color
+		} else {
+			if config.Color {
+				settings.Color = true
+			} else {
+				settings.Color = false
+			}
+		}
+	}
+
+	if flags.Nocolor {
+		settings.Nocolor = true
+	} else {
+		settings.Nocolor = config.Nocolor
+	}
+
+	if flags.Ignorefile != "" {
+		settings.Ignorefile = flags.Ignorefile
+	} else {
+		settings.Ignorefile = config.Ignorefile
+	}
+
+	if flags.Excluded {
+		settings.Excluded = true
+	} else {
+		settings.Excluded = config.Excluded
+	}
+
+	if flags.Included {
+		settings.Included = true
+	} else {
+		settings.Included = config.Included
+	}
+
+	if flags.Invertcolors {
+		settings.Invertcolors = true
+	} else {
+		settings.Invertcolors = config.Invertcolors
+	}
+
+	if flags.Fullpath {
+		settings.Fullpath = true
+	} else {
+		settings.Fullpath = config.Fullpath
+	}
+
+	if flags.Nofullpath {
+		settings.Nofullpath = true
+	} else {
+		settings.Nofullpath = config.Nofullpath
+	}
+
+	return nil
 }
