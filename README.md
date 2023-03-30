@@ -187,7 +187,6 @@ Also overrides the environment variable.
 
 For more information on for the environment variable `$CLICOLOR` see: [CLICOLOR website][CLICOLOR].
 
-
 ### Configuration via environment variables
 
 `stevedore` support locating a configuration file in:
