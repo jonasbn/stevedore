@@ -89,19 +89,25 @@ func realMain() int {
 	}
 	flag.Visit(markFlags)
 
+	/*
+		colorEnv := resolveColorEnv()
+
+		if colorEnv {
+			config.Nocolor = false
+		}
+
+		if !colorEnv {
+			config.Color = false
+			config.Invertcolors = false
+		}
+	*/
+
 	resolveSettings(&flags, &config, &settings)
 
 	path := flag.Arg(0)
 
 	if path == "" {
 		path = "."
-	}
-
-	nocolorEnv := resolveEnvNocolor()
-
-	if nocolorEnv {
-		config.Color = false
-		config.Invertcolors = false
 	}
 
 	var ignoreLines string
@@ -158,7 +164,7 @@ func realMain() int {
 
 	if settings.Debug {
 		fmt.Println("Environment Variables")
-		fmt.Println("ENV NO_COLOR: ", nocolorEnv)
+		fmt.Println("ENV COLOR: ", resolveColorEnv())
 	}
 
 	var err error
@@ -351,12 +357,6 @@ func loadLocalConfigFile(configFile string, config *Config) (loaded bool, err er
 	return true, nil
 }
 
-func resolveEnvNocolor() bool {
-	_, ok := os.LookupEnv("NO_COLOR")
-
-	return ok
-}
-
 func parseFlags(flags *Config, settings *Config) (err error) {
 	flag.CommandLine = flag.NewFlagSet(os.Args[0], flag.ExitOnError)
 
@@ -451,8 +451,9 @@ func resolveSettings(flags *Config, config *Config, settings *Config) (err error
 
 	if flags.Color {
 		settings.Color = true
+		settings.Nocolor = false
 	} else {
-		if !resolveEnvNocolor() {
+		if !resolveColorEnv() {
 			settings.Color = config.Color
 		} else {
 			if config.Color {
@@ -465,6 +466,7 @@ func resolveSettings(flags *Config, config *Config, settings *Config) (err error
 
 	if flags.Nocolor {
 		settings.Nocolor = true
+		settings.Color = false
 	} else {
 		settings.Nocolor = config.Nocolor
 	}
@@ -506,4 +508,49 @@ func resolveSettings(flags *Config, config *Config, settings *Config) (err error
 	}
 
 	return nil
+}
+
+func resolveColorEnv() bool {
+	switch {
+	case nocolor():
+		return false
+	case clicolor():
+		return true
+	default:
+		return false
+	}
+}
+
+func nocolor() bool {
+	_, ok := os.LookupEnv("NO_COLOR")
+
+	if ok {
+		return true
+	} else {
+		return false
+	}
+}
+
+func clicolor() bool {
+	clicolor := os.Getenv("CLICOLOR")
+	clicolorForce := os.Getenv("CLICOLOR_FORCE")
+
+	// REF: https://stackoverflow.com/questions/43947363/detect-if-a-command-is-piped-or-not
+	fi, _ := os.Stdin.Stat()
+
+	if fi.Mode()&os.ModeCharDevice == 0 {
+		return false
+	}
+
+	if clicolor == "0" || clicolor == "" {
+
+		if clicolorForce == "0" || clicolorForce == "" {
+			return false
+		} else {
+			return true
+		}
+
+	} else {
+		return true
+	}
 }

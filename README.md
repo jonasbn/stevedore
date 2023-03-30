@@ -155,7 +155,9 @@ The `.stevedoreignore` file follows the general implementation pattern. and exam
 
 ## Environment
 
-### Support for color output via environment variable
+### Support for color output via environment variables
+
+#### `$NO_COLOR`
 
 stevedore supports color output, color output can be suppressed by setting  the environment variable `$NO_COLOR`.
 
@@ -169,6 +171,22 @@ The configurations from either:
 Also overrides the environment variable.
 
 For more information on for the environment variable `$NO_COLOR` see: [no-color.org][NOCOLOR].
+
+#### `$CLICOLOR`
+
+Color output can be suppressed by setting the environment variable `$CLICOLOR` to `0`.
+
+The command line parameter `--color` and `--nocolor` overrides the environment variable.
+
+The configurations from either:
+
+- `.stevedore.json` local configuration file
+- `$HOME/.config/stevedore/config.json` global configuration file
+
+Also overrides the environment variable.
+
+For more information on for the environment variable `$CLICOLOR` see: [CLICOLOR website][CLICOLOR].
+
 
 ### Configuration via environment variables
 
@@ -187,9 +205,16 @@ See Configuration section for details on configuration.
 
 ## Compatibility
 
+stevedore can handle ignore files from:
+
 - [Docker ignore][DOCKERIGNORE]: `.dockerignore` (main purpose)
 - [Git ignore][GITIGNORE]: `.gitignore`
 - [Yak ignore][YAKIGNORE]: `.yakignore`
+
+stevedore support the following environment variable standards:
+
+- [NO_COLOR website][NOCOLOR]
+- [CLICOLOR website][CLICOLOR]
 
 ## Incompatibility
 
@@ -211,6 +236,7 @@ See Configuration section for details on configuration.
 - [`path/filepath` documentation for `WalkDir` function](https://pkg.go.dev/path/filepath#WalkDir)
 - [Background image by photographer Josh Young](https://unsplash.com/photos/Huv8EWe2Vo8)
 - [NO_COLOR website][NOCOLOR]
+- [CLICOLOR website][CLICOLOR]
 
 ## License and Copyright
 
@@ -223,3 +249,4 @@ See Configuration section for details on configuration.
 [DOCKERIGNORE]: https://docs.docker.com/engine/reference/builder/#dockerignore-file
 [YAKIGNORE]: https://jonasbn.github.io/yak/
 [NOCOLOR]: https://no-color.org/
+[CLICOLOR]: https://bixense.com/clicolors/
