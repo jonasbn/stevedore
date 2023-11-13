@@ -1,5 +1,11 @@
 # Change log for stevedore
 
+## 0.11.0 2023-11-13 maintenance release, update not required
+
+- Merged pull request [#47](https://github.com/jonasbn/stevedore/pull/47) from @dependabot bumping fatih/color to version 1.16.0
+
+- Merged pull request [#31](https://github.com/jonasbn/stevedore/pull/31) from @dependabot bumping fatih/color to version 1.15.0
+
 ## 0.10.0 2023-03-12 feature release, update not required
 
 - Added support for global configuration file, now both: local and global configuration files are supported
