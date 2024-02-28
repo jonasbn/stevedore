@@ -1,7 +1,7 @@
 .git
 main.go
-_site
-assets
+_site/
+assets/
 cover.out
 dictionary.dic
 examples

@@ -295,7 +295,13 @@ func realMain() int {
 			return nil
 		}
 
-		if ignoreObject.MatchesPath(path) {
+		var aliasedPath = path
+
+		if info.IsDir() {
+			aliasedPath += "/"
+		}
+
+		if ignoreObject.MatchesPath(path) || ignoreObject.MatchesPath(aliasedPath) {
 			if config.Excluded {
 				if config.Color {
 					colorize.Set(ignoredColor)
