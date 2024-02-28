@@ -1,5 +1,16 @@
 # Change log for stevedore
 
+## 0.12.0 2024-02-28 feature release, update recommended
+
+- Merged pull request [#53](https://github.com/jonasbn/stevedore/pull/53) from @jonasbn. Since the path is compared as strings
+  The usage of appending a `/` to the path as done in many ignore files. 
+  
+  I had a look at the repository:
+  
+  - [github/gitignore](https://github.com/github/gitignore)
+  
+  `stevedore` now handles cases by checking directories both with and without slash appended to the directory name in the ignore file.
+
 ## 0.11.0 2023-11-13 maintenance release, update not required
 
 - Merged pull request [#47](https://github.com/jonasbn/stevedore/pull/47) from @dependabot bumping fatih/color to version 1.16.0
