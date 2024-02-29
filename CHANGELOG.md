@@ -3,7 +3,7 @@
 ## 0.12.0 2024-02-28 feature release, update recommended
 
 - Merged pull request [#53](https://github.com/jonasbn/stevedore/pull/53) from @jonasbn. Since the path is compared as strings
-  The usage of appending a `/` to the path as done in many ignore files. 
+  The usage of appending a `/` to the path as done in many ignore files.
   
   I had a look at the repository:
   
