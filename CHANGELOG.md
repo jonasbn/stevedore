@@ -1,5 +1,9 @@
 # Change log for stevedore
 
+## 0.13.0 2024-06-01 maintenance release, update not required
+
+- Merged pull request [#56](https://github.com/jonasbn/stevedore/pull/56) from @dependabot bumping fatih/color to version 1.17.0
+
 ## 0.12.0 2024-02-28 feature release, update recommended
 
 - Merged pull request [#53](https://github.com/jonasbn/stevedore/pull/53) from @jonasbn. Since the path is compared as strings
