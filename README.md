@@ -1,6 +1,9 @@
 # stevedore
 
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/jonasbn/stevedore/badge)](https://scorecard.dev/viewer/?uri=github.com/jonasbn/stevedore)
+![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/jonasbn/stevedore)
+![GitHub Issues or Pull Requests](https://img.shields.io/github/issues/jonasbn/stevedore)
+![GitHub Actions Workflow Gi Build Status](https://img.shields.io/github/actions/workflow/status/jonasbn/stevedore/go-build.yml)
 
 `stevedore` is a small command line tool taking it's name from the worker, working on the dock with loading cargo unto ships.
 
