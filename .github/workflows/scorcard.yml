@@ -1,0 +1,10 @@
+# https://github.com/marketplace/actions/ossf-scorecard-action
+name: Supply-chain security via Scorecard Action
+on: push
+
+jobs:
+  build:
+    name: OSSF Scorecard Analysis
+    uses: ossf/scorecard-action@v2.3.3
+
+permissions: read-all
