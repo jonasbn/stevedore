@@ -1,5 +1,7 @@
 # stevedore
 
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/jonasbn/stevedore/badge)](https://scorecard.dev/viewer/?uri=github.com/jonasbn/stevedore)
+
 `stevedore` is a small command line tool taking it's name from the worker, working on the dock with loading cargo unto ships.
 
 REF: [Wikipedia][WIKIPEDIA]
