@@ -6,4 +6,4 @@ Since this is a public repository a security vulnerability should be reported vi
 
 - [Repository advisories page](https://github.com/jonasbn/stevedore/security/advisories)
 
-Alternatively email or IRC ([www.irc.perl.org](https://www.irc.perl.org/) || [ircs://ssl.ircs.perl.org:7062](ircs://ssl.ircs.perl.org:7062)).
+Alternatively email or IRC ([www.irc.perl.org](https://www.irc.perl.org/) || ircs://ssl.ircs.perl.org:7062/).
