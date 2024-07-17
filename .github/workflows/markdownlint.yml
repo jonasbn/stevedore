@@ -1,6 +1,8 @@
 name: Markdownlint Action
 on: push
 
+permissions: read-all
+
 jobs:
   build:
     name: Markdownlint
