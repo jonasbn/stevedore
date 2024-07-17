@@ -15,3 +15,5 @@ XDG
 CLI
 fatih
 dependabot
+ircs
+ssl
