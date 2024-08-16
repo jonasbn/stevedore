@@ -72,7 +72,7 @@ func realMain() int {
 
 	var ignorefile string
 	flag.StringVar(&ignorefile, "ignorefile", "", "a path to a specific ignore file")
-	flag.StringVar(&ignorefile, "i", "", "a path to an specific ignore file")
+	flag.StringVar(&ignorefile, "i", "", "a path to a specific ignore file")
 
 	var excluded bool
 	flag.BoolVar(&excluded, "excluded", config.Excluded, "only output excluded files")
