@@ -1,5 +1,9 @@
 # Change log for stevedore
 
+## 0.13.1 2024-08-16 bug fix release, update not required
+
+- Corrected two grammatical errors in the usage output
+
 ## 0.13.0 2024-06-01 maintenance release, update not required
 
 - Merged pull request [#56](https://github.com/jonasbn/stevedore/pull/56) from @dependabot bumping fatih/color to version 1.17.0
