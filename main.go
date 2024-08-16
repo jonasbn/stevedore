@@ -71,7 +71,7 @@ func realMain() int {
 	flag.BoolVar(&nocolor, "n", config.Nocolor, "disable use of colors")
 
 	var ignorefile string
-	flag.StringVar(&ignorefile, "ignorefile", "", "a path to an specific ignore file")
+	flag.StringVar(&ignorefile, "ignorefile", "", "a path to a specific ignore file")
 	flag.StringVar(&ignorefile, "i", "", "a path to an specific ignore file")
 
 	var excluded bool
