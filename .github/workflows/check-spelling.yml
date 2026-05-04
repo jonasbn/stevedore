@@ -1,5 +1,12 @@
 name: Spellcheck Action
-on: push
+
+on:
+  push:
+    paths:
+    - '**.md'
+    - '.github/workflows/check-spelling.yml'
+    - '.github/spellcheck.yml'
+    - '.github/spellchecker-wordlist.txt'
 
 permissions: read-all
 
@@ -8,6 +15,7 @@ jobs:
     name: Spellcheck
     runs-on: ubuntu-latest
     steps:
+
     - name: Harden Runner
       uses: step-security/harden-runner@a5ad31d6a139d249332a2605b85202e8c0b78450 # v2.19.1
       with:
@@ -15,8 +23,9 @@ jobs:
         allowed-endpoints: >
           github.com:443
 
-    - name: Checkout
+    - name: Check out repository
       uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
     - name: Spellcheck
       uses: rojopolis/spellcheck-github-actions@e3cd8e9aec4587ec73bc0e60745aafd45c37aa2e # 0.60.0
       with:

@@ -1,5 +1,12 @@
 name: Markdownlint Action
-on: push
+
+on:
+  push:
+    paths:
+    - '**.md'
+    - '.github/workflows/markdownlint.yml'
+    - '.github/markdownlint.json'
+    - '.github/.markdownlintignore'
 
 permissions: read-all
 
@@ -8,13 +15,15 @@ jobs:
     name: Markdownlint
     runs-on: ubuntu-latest
     steps:
+
     - name: Harden Runner
       uses: step-security/harden-runner@a5ad31d6a139d249332a2605b85202e8c0b78450 # v2.19.1
       with:
         egress-policy: audit
 
-    - name: Checkout
+    - name: Check out repository
       uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
     - name: Markdownlint
       uses: nosborn/github-action-markdown-cli@508d6cefd8f0cc99eab5d2d4685b1d5f470042c1 # v3.5.0
       with:
