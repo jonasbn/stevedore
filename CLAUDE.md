@@ -9,8 +9,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 ```bash
-# Build
+# Build all packages (CI / compilation check)
 go build -v ./...
+
+# Build the local executable used below
+go build -o stevedore .
 
 # Test (all)
 go test -v ./...
