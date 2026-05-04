@@ -4,6 +4,9 @@ on:
   push:
     paths:
     - '**.md'
+    - '.github/workflows/check-spelling.yml'
+    - '.github/spellcheck.yml'
+    - '.github/spellchecker-wordlist.txt'
 
 permissions: read-all
 
