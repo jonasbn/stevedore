@@ -6,6 +6,7 @@ updates:
     # Check for updates once a week
     schedule:
       interval: "weekly"
+
   - package-ecosystem: "gomod"
     # Look for Go code in the `root` directory
     directory: "/"
@@ -14,6 +15,6 @@ updates:
       interval: "weekly"
 
   - package-ecosystem: bundler
-    directory: /
+    directory: "/"
     schedule:
-      interval: daily
+      interval: "weekly"
