@@ -61,11 +61,11 @@ The entire application logic lives in **`main.go`** (~410 lines) — there is no
 
 The three test suites in `main_test.go`:
 
-- **TestArguments** — exercises every CLI flag combination against the project's own directory; all expect exit code 0.
+- **TestArguments** — enumerates individual CLI flag cases against the project's own directory; these cases expect successful execution (exit code 0).
 - **TestFails** — creates temp directories with permission-restricted ignore files to trigger exit code 1.
-- **TestConfig** — validates config file loading with a temporary `.stevedore.json`.
+- **TestConfig** — exercises `realMain()` in the `tests/ok` fixture context after setting up `tests/ok/.dockerignore`; it does not currently create or validate loading a temporary `.stevedore.json`.
 
-Tests call `main()` directly via `os.Args` manipulation and capture behavior through exit codes. When adding new flags, add a corresponding case to `TestArguments`.
+Tests call `main()` directly via `os.Args` manipulation and capture behavior through exit codes. When adding new flags, consider adding or updating a focused case in `TestArguments`.
 
 ## Key Dependencies
 
