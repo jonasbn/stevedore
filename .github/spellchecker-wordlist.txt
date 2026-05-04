@@ -17,3 +17,15 @@ fatih
 dependabot
 ircs
 ssl
+TestArguments
+TestConfig
+TestFails
+golangci
+dockerignore
+Config
+struct
+Pre
+gitleaks
+golangci
+repo
+whitespace
