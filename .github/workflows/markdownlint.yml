@@ -4,6 +4,9 @@ on:
   push:
     paths:
     - '**.md'
+    - '.github/workflows/markdownlint.yml'
+    - '.github/markdownlint.json'
+    - '.github/.markdownlintignore'
 
 permissions: read-all
 
