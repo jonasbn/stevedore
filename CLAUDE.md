@@ -90,6 +90,38 @@ focused case in `TestArguments`.
 - `github.com/sabhiram/go-gitignore` — `.gitignore`/`.dockerignore` pattern
   matching
 
+## CI / GitHub Actions
+
+Workflows live under `.github/workflows/`:
+
+- **build** — `go build`/`go test` on push and PR.
+- **codeql.yml** — CodeQL analysis (go, ruby). The `init`, `autobuild`, and
+  `analyze` steps must all be pinned to the *same* `codeql-action` version.
+  Dependabot bumps these as separate PRs, one per sub-action; merging just
+  one alone leaves the others behind and breaks CI with `Loaded a
+  configuration file for version X, but running version Y`. Bump `init`,
+  `autobuild`, and `analyze` together (consolidate the Dependabot PRs into
+  one branch/PR) rather than merging them individually.
+- **scorecard.yml** — OSSF Scorecard; uses `codeql-action/upload-sarif`,
+  which is independent of the init/autobuild/analyze version-sync
+  constraint above and can be bumped on its own.
+- **Spellcheck** — `rojopolis/spellcheck-github-actions`, config at
+  `.github/spellcheck.yml`, checks all `**/*.md` files (including headings)
+  against `.github/spellchecker-wordlist.txt`. Adding a doc with a
+  project-specific term or an all-caps heading (e.g. `TODO`) that isn't a
+  dictionary word requires adding it to the wordlist or the job fails.
+- **Markdownlint** — lints all Markdown files.
+- **dependency-review** — runs on PRs that change dependencies.
+- Copilot's automated PR reviewer and the Coveralls coverage bot both
+  comment on PRs automatically; check for these before assuming a human
+  reviewer commented.
+
+## Documentation
+
+- `docs/TODO.md` — checklist mirroring the open GitHub enhancement issues.
+  Keep it in sync (add/check off entries) when issues are opened or closed,
+  if asked to.
+
 ## Pre-commit Hooks
 
 The repo uses `.pre-commit-config.yaml` with gitleaks (secret scanning),
