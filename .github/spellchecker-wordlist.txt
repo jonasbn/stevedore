@@ -31,3 +31,12 @@ repo
 whitespace
 ignorefile
 TODO
+CodeQL
+codeql
+yml
+PRs
+OSSF
+autobuild
+init
+wordlist
+Markdownlint
