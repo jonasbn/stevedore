@@ -94,7 +94,7 @@ focused case in `TestArguments`.
 
 Workflows live under `.github/workflows/`:
 
-- **build** — `go build`/`go test` on push and PR.
+- **go-build.yml** ("Go Build and Test Action") — `go build`/`go test` on push and PR.
 - **codeql.yml** — CodeQL analysis (go, ruby). The `init`, `autobuild`, and
   `analyze` steps must all be pinned to the *same* `codeql-action` version.
   Dependabot bumps these as separate PRs, one per sub-action; merging just
@@ -105,13 +105,14 @@ Workflows live under `.github/workflows/`:
 - **scorecard.yml** — OSSF Scorecard; uses `codeql-action/upload-sarif`,
   which is independent of the init/autobuild/analyze version-sync
   constraint above and can be bumped on its own.
-- **Spellcheck** — `rojopolis/spellcheck-github-actions`, config at
-  `.github/spellcheck.yml`, checks all `**/*.md` files (including headings)
-  against `.github/spellchecker-wordlist.txt`. Adding a doc with a
+- **check-spelling.yml** ("Spellcheck Action") — `rojopolis/spellcheck-github-actions`,
+  config at `.github/spellcheck.yml`, checks all `**/*.md` files (including
+  headings) against `.github/spellchecker-wordlist.txt`. Adding a doc with a
   project-specific term or an all-caps heading (e.g. `TODO`) that isn't a
   dictionary word requires adding it to the wordlist or the job fails.
-- **Markdownlint** — lints all Markdown files.
-- **dependency-review** — runs on PRs that change dependencies.
+- **markdownlint.yml** ("Markdownlint Action") — lints all Markdown files.
+- **dependency-review.yml** ("Dependency Review") — runs on every PR, scanning
+  dependency manifest changes introduced by that PR.
 - Copilot's automated PR reviewer and the Coveralls coverage bot both
   comment on PRs automatically; check for these before assuming a human
   reviewer commented.
