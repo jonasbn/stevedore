@@ -29,3 +29,5 @@ gitleaks
 golangci
 repo
 whitespace
+ignorefile
+TODO
