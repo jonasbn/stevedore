@@ -119,7 +119,7 @@ Workflows live under `.github/workflows/`:
 - **markdownlint.yml** ("Markdownlint Action") — lints all Markdown files.
 - **dependency-review.yml** ("Dependency Review") — runs on every PR, scanning
   dependency manifest changes introduced by that PR.
-- **go-releaser.yml** ("Go Releaser Action") — runs GoReleaser on `v*` tag
+- **go-releaser.yml** ("Go Releaser Action") — runs `GoReleaser` on `v*` tag
   pushes to publish a GitHub release.
 - **zizmor.yml** — static analysis for GitHub Actions workflow security
   (script injection, credential persistence, cache poisoning); uploads SARIF
