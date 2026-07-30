@@ -90,6 +90,12 @@ focused case in `TestArguments`.
 - `github.com/sabhiram/go-gitignore` — `.gitignore`/`.dockerignore` pattern
   matching
 
+**`go.mod`'s `go 1.25.0` directive is dependency-constrained, not a style
+choice** — `fatih/color` and `golang.org/x/sys` both declare `go 1.25.0`
+(three-part) in their own `go.mod`, and `go mod tidy` force-rewrites any
+looser `go 1.25` back to `1.25.0` to match. Don't "simplify" it without
+re-checking dependency `go.mod` requirements first.
+
 ## CI / GitHub Actions
 
 Workflows live under `.github/workflows/`:
@@ -113,9 +119,22 @@ Workflows live under `.github/workflows/`:
 - **markdownlint.yml** ("Markdownlint Action") — lints all Markdown files.
 - **dependency-review.yml** ("Dependency Review") — runs on every PR, scanning
   dependency manifest changes introduced by that PR.
+- **go-releaser.yml** ("Go Releaser Action") — runs GoReleaser on `v*` tag
+  pushes to publish a GitHub release.
+- **zizmor.yml** — static analysis for GitHub Actions workflow security
+  (script injection, credential persistence, cache poisoning); uploads SARIF
+  to code scanning. Common fixes: `persist-credentials: false` on
+  `actions/checkout` (artipacked), `cache: false` on `actions/setup-go` in
+  workflows that share a cache with untrusted PR builds (cache-poisoning),
+  and a `cooldown`/`groups` block per ecosystem in `dependabot.yml`
+  (dependabot-cooldown).
 - Copilot's automated PR reviewer and the Coveralls coverage bot both
   comment on PRs automatically; check for these before assuming a human
   reviewer commented.
+- `main` branch protection: 0 required PR approvals (solo maintainer — GitHub
+  disallows self-approval), required status checks (`build`, `CodeQL`,
+  `zizmor`, `dependency-review`) with `strict: true` (branch must be
+  up-to-date before merge).
 
 ## Documentation
 
@@ -128,3 +147,12 @@ Workflows live under `.github/workflows/`:
 The repo uses `.pre-commit-config.yaml` with gitleaks (secret scanning),
 golangci-lint, end-of-file-fixer, and trailing-whitespace checks. Run
 `pre-commit run --all-files` before submitting changes if hooks are installed.
+
+## Security Tooling
+
+- Snyk was evaluated and dropped (2026-07-30) in favor of GitHub-native
+  tooling — Dependabot alerts, secret scanning, and zizmor. If a
+  Snyk-sourced CVE is ever cited, verify the affected package actually
+  appears in `go.mod`/`go.sum` before treating it as relevant to this repo.
+- GitHub secret scanning + push protection are enabled at the repo level
+  (public repo).
