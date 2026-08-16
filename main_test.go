@@ -191,6 +191,14 @@ func TestColorEnvArguments(t *testing.T) {
 			t.Errorf("Wrong exit code for args: %v, expected: %v, got: %v",
 				tc.Args, tc.ExpectedExit, actualExit)
 		}
+
+		// realMain() may clear NO_COLOR in-process to override auto-detection;
+		// it must restore it before returning so it doesn't leak into
+		// subsequent calls within the same process.
+		if got := os.Getenv("NO_COLOR"); got != tc.NoColorEnv {
+			t.Errorf("NO_COLOR was not restored after realMain() for args: %v, expected: %q, got: %q",
+				tc.Args, tc.NoColorEnv, got)
+		}
 	}
 }
 

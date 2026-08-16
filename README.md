@@ -72,7 +72,8 @@ In addition to `--color`/`-c` and `--nocolor`/`-n`, `stevedore` honors the
 following environment variables for enabling or disabling color output:
 
 - [`NO_COLOR`][NO_COLOR]: disables color when set to any non-empty value,
-  regardless of the value itself.
+  regardless of the value itself — unless overridden by a higher-precedence
+  signal, see the precedence list below.
 - [`CLICOLOR`][CLICOLOR]: set to `0` to disable color, matching `NO_COLOR`.
 - [`CLICOLOR_FORCE`][CLICOLOR]: set to any value other than `0` to force
   color output even when standard output is not a terminal (e.g. when

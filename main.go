@@ -96,9 +96,21 @@ func realMain() int {
 	var nofullpath bool
 	flag.BoolVar(&nofullpath, "nofullpath", config.Nofullpath, "emits files and directories without full path")
 
-	// NO_COLOR (https://no-color.org/): disable color when present and non-empty,
-	// regardless of its value.
-	noColorEnv := os.Getenv("NO_COLOR")
+	// NO_COLOR (https://no-color.org/): disables color when present and
+	// non-empty, regardless of its value — unless overridden by a
+	// higher-precedence signal (an explicit --color/-c flag, or
+	// CLICOLOR_FORCE); see resolveColorConfig for the full precedence.
+	origNoColorEnv, origNoColorSet := os.LookupEnv("NO_COLOR")
+	noColorEnv := origNoColorEnv
+	// Restore NO_COLOR to its original state before returning, since an
+	// override below may clear it for the duration of this call only.
+	defer func() {
+		if origNoColorSet {
+			_ = os.Setenv("NO_COLOR", origNoColorEnv)
+		} else {
+			_ = os.Unsetenv("NO_COLOR")
+		}
+	}()
 	// CLICOLOR / CLICOLOR_FORCE (https://bixense.com/clicolors/):
 	// CLICOLOR=0 disables color; CLICOLOR_FORCE!=0 forces color even when not a TTY.
 	cliColorEnv := os.Getenv("CLICOLOR")
@@ -265,13 +277,18 @@ func realMain() int {
 		config.Invertcolors = false
 	}
 
-	// CLICOLOR_FORCE overrides fatih/color's own TTY auto-detection; otherwise
-	// restore its originally detected value so repeated invocations within the
-	// same process (e.g. tests) don't leak a forced state across each other.
+	// An explicit --color/-c flag or CLICOLOR_FORCE must win over NO_COLOR and
+	// fatih/color's own TTY auto-detection, to honor the documented "CLI flags
+	// > env vars" precedence and CLICOLOR_FORCE's "regardless of piping"
+	// contract. Otherwise restore fatih/color's originally detected value so
+	// repeated invocations within the same process (e.g. tests) don't leak an
+	// overridden state across each other.
 	// fatih/color also re-checks the live NO_COLOR env var every time it
 	// creates a Color (independent of the NoColor package var above), so it
-	// must be cleared here too or a forced Set() would still be suppressed.
-	if forceColor {
+	// must be cleared here too or a forced Set() would still be suppressed;
+	// the deferred restore above puts it back before this call returns.
+	overrideAutoDetect := forceColor || (colorFlagExplicit && config.Color)
+	if overrideAutoDetect {
 		colorize.NoColor = false
 		_ = os.Unsetenv("NO_COLOR")
 	} else {
