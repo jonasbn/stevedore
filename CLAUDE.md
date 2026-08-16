@@ -142,6 +142,19 @@ Workflows live under `.github/workflows/`:
   Keep it in sync (add/check off entries) when issues are opened or closed,
   if asked to.
 
+## Releasing
+
+- `CHANGELOG.md` uses a custom (non-Keep-a-Changelog) format: `## X.Y.Z
+  YYYY-MM-DD <type> release, update <recommended|not required>` followed by
+  a bullet list, linking PRs/issues as `[#295](https://github.com/.../pull/295)`.
+- Release steps: fetch and fast-forward local `main` (it can lag behind
+  `origin/main` after PRs merged elsewhere) → add a CHANGELOG.md entry →
+  commit and push to `main` → `git tag -a vX.Y.Z` → push the tag, which
+  triggers `go-releaser.yml` to publish the GitHub release with binaries.
+- The repo owner can push directly to `main` (GitHub reports "Bypassed rule
+  violations") despite the PR-required branch protection — routine release
+  commits (e.g. a CHANGELOG bump) don't need a PR.
+
 ## Pre-commit Hooks
 
 The repo uses `.pre-commit-config.yaml` with gitleaks (secret scanning),
