@@ -1,5 +1,14 @@
 # Change log for stevedore
 
+## 0.14.0 2026-08-16 feature release, update recommended
+
+- Added support for `CLICOLOR`/`CLICOLOR_FORCE` environment variables and
+  fixed color precedence handling with `NO_COLOR`. The precedence order is
+  now: CLI flags > environment variables (`CLICOLOR_FORCE`, `NO_COLOR`,
+  `CLICOLOR`) > configuration file > defaults. Merged pull request
+  [#295](https://github.com/jonasbn/stevedore/pull/295), closes
+  [#292](https://github.com/jonasbn/stevedore/issues/292)
+
 ## 0.13.1 2024-08-16 bug fix release, update not required
 
 - Corrected two grammatical errors in the usage output
