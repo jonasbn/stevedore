@@ -18,6 +18,11 @@ import (
 var (
 	ignoredColor  = colorize.FgGreen
 	includedColor = colorize.FgHiRed
+
+	// defaultNoColor captures fatih/color's TTY/NO_COLOR/TERM auto-detection
+	// at package init, so CLICOLOR_FORCE can override it and later restore it
+	// on the next invocation (relevant across repeated realMain() calls in tests).
+	defaultNoColor = colorize.NoColor
 )
 
 type Config struct {
@@ -91,7 +96,25 @@ func realMain() int {
 	var nofullpath bool
 	flag.BoolVar(&nofullpath, "nofullpath", config.Nofullpath, "emits files and directories without full path")
 
-	nocolorEnv := os.Getenv("NO_COLOR")
+	// NO_COLOR (https://no-color.org/): disables color when present and
+	// non-empty, regardless of its value — unless overridden by a
+	// higher-precedence signal (an explicit --color/-c flag, or
+	// CLICOLOR_FORCE); see resolveColorConfig for the full precedence.
+	origNoColorEnv, origNoColorSet := os.LookupEnv("NO_COLOR")
+	noColorEnv := origNoColorEnv
+	// Restore NO_COLOR to its original state before returning, since an
+	// override below may clear it for the duration of this call only.
+	defer func() {
+		if origNoColorSet {
+			_ = os.Setenv("NO_COLOR", origNoColorEnv)
+		} else {
+			_ = os.Unsetenv("NO_COLOR")
+		}
+	}()
+	// CLICOLOR / CLICOLOR_FORCE (https://bixense.com/clicolors/):
+	// CLICOLOR=0 disables color; CLICOLOR_FORCE!=0 forces color even when not a TTY.
+	cliColorEnv := os.Getenv("CLICOLOR")
+	cliColorForceEnv := os.Getenv("CLICOLOR_FORCE")
 
 	flag.Parse()
 
@@ -118,6 +141,11 @@ func realMain() int {
 		fmt.Printf("Error attempting to read configuration file: %s, continuing...\n", err)
 	}
 
+	// colorFlagExplicit tracks whether the user explicitly passed --color/-c or
+	// --nocolor/-n on the command line, so those take precedence over the
+	// NO_COLOR/CLICOLOR/CLICOLOR_FORCE environment variables below.
+	colorFlagExplicit := false
+
 	markFlags := func(f *flag.Flag) {
 		switch {
 		case f.Name == "debug":
@@ -125,9 +153,11 @@ func realMain() int {
 		case f.Name == "color" || f.Name == "c":
 			config.Color = true
 			config.Nocolor = false
+			colorFlagExplicit = true
 		case f.Name == "nocolor" || f.Name == "n":
 			config.Nocolor = true
 			config.Color = false
+			colorFlagExplicit = true
 		case f.Name == "ignorefile" || f.Name == "i":
 			config.Ignorefile = ignorefile
 		case f.Name == "excluded":
@@ -149,6 +179,15 @@ func realMain() int {
 		}
 	}
 	flag.Visit(markFlags)
+
+	// Precedence for color settings: CLI flags > env vars > config file > defaults.
+	// forceColor tracks CLICOLOR_FORCE so fatih/color's own TTY auto-detection
+	// can be overridden below, since CLICOLOR_FORCE must apply even when not a TTY.
+	var forceColor bool
+	config.Color, config.Nocolor, forceColor = resolveColorConfig(
+		colorFlagExplicit, config.Color, config.Nocolor,
+		noColorEnv, cliColorEnv, cliColorForceEnv,
+	)
 
 	path := flag.Arg(0)
 
@@ -210,7 +249,9 @@ func realMain() int {
 
 	if config.Debug {
 		fmt.Println("Environment Variables")
-		fmt.Println("ENV: ", nocolorEnv)
+		fmt.Println("\tNO_COLOR: ", noColorEnv)
+		fmt.Println("\tCLICOLOR: ", cliColorEnv)
+		fmt.Println("\tCLICOLOR_FORCE: ", cliColorForceEnv)
 	}
 
 	var ignoreObject = ignore.CompileIgnoreLines([]string{}...)
@@ -231,9 +272,27 @@ func realMain() int {
 		config.Nocolor = false
 	}
 
-	if config.Nocolor || nocolorEnv != "" || nocolorEnv == "1" {
+	if config.Nocolor {
 		config.Color = false
 		config.Invertcolors = false
+	}
+
+	// An explicit --color/-c flag or CLICOLOR_FORCE must win over NO_COLOR and
+	// fatih/color's own TTY auto-detection, to honor the documented "CLI flags
+	// > env vars" precedence and CLICOLOR_FORCE's "regardless of piping"
+	// contract. Otherwise restore fatih/color's originally detected value so
+	// repeated invocations within the same process (e.g. tests) don't leak an
+	// overridden state across each other.
+	// fatih/color also re-checks the live NO_COLOR env var every time it
+	// creates a Color (independent of the NoColor package var above), so it
+	// must be cleared here too or a forced Set() would still be suppressed;
+	// the deferred restore above puts it back before this call returns.
+	overrideAutoDetect := forceColor || (colorFlagExplicit && config.Color)
+	if overrideAutoDetect {
+		colorize.NoColor = false
+		_ = os.Unsetenv("NO_COLOR")
+	} else {
+		colorize.NoColor = defaultNoColor
 	}
 
 	if config.Invertcolors {
@@ -338,6 +397,36 @@ func realMain() int {
 	}
 
 	return 0
+}
+
+// resolveColorConfig applies the NO_COLOR (https://no-color.org/) and
+// CLICOLOR/CLICOLOR_FORCE (https://bixense.com/clicolors/) environment
+// variables to the color/nocolor settings, honoring precedence:
+// CLI flags > env vars > config file > defaults.
+//
+// color and nocolor are the settings as resolved so far from defaults and
+// config files. If colorFlagExplicit is true (the user passed --color/-c or
+// --nocolor/-n on the command line), the env vars are ignored entirely and
+// color/nocolor are returned unchanged. Otherwise, CLICOLOR_FORCE (if set to
+// anything other than "0") takes precedence over NO_COLOR, which takes
+// precedence over CLICOLOR=0.
+func resolveColorConfig(colorFlagExplicit bool, color, nocolor bool, noColorEnv, cliColorEnv, cliColorForceEnv string) (resolvedColor, resolvedNocolor, forceColor bool) {
+	resolvedColor, resolvedNocolor = color, nocolor
+
+	if colorFlagExplicit {
+		return
+	}
+
+	switch {
+	case cliColorForceEnv != "" && cliColorForceEnv != "0":
+		resolvedColor, resolvedNocolor, forceColor = true, false, true
+	case noColorEnv != "":
+		resolvedColor, resolvedNocolor = false, true
+	case cliColorEnv == "0":
+		resolvedColor, resolvedNocolor = false, true
+	}
+
+	return
 }
 
 func loadGlobalConfigFile(configFile string, config *Config) (rv bool, err error) {

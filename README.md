@@ -66,6 +66,30 @@ Add a local configuration file, where you want to continuously override the glob
 
 See Configuration section for details on configuration.
 
+### Color environment variables
+
+In addition to `--color`/`-c` and `--nocolor`/`-n`, `stevedore` honors the
+following environment variables for enabling or disabling color output:
+
+- [`NO_COLOR`][NO_COLOR]: disables color when set to any non-empty value,
+  regardless of the value itself — unless overridden by a higher-precedence
+  signal, see the precedence list below.
+- [`CLICOLOR`][CLICOLOR]: set to `0` to disable color, matching `NO_COLOR`.
+- [`CLICOLOR_FORCE`][CLICOLOR]: set to any value other than `0` to force
+  color output even when standard output is not a terminal (e.g. when
+  piped or redirected to a file).
+
+Overall precedence, from highest to lowest:
+
+1. `--color`/`-c` or `--nocolor`/`-n` command line flags
+2. Environment variables, checked in this order: `CLICOLOR_FORCE`,
+   `NO_COLOR`, `CLICOLOR`
+3. Configuration file (`color`/`nocolor` keys)
+4. Defaults (color enabled)
+
+[NO_COLOR]: https://no-color.org/
+[CLICOLOR]: https://bixense.com/clicolors/
+
 ### Verbosity
 
 If the verbose flag is set the output is altered and is more explanatory:
