@@ -4,21 +4,21 @@ on:
   push:
     branches: ["main"]
   pull_request:
-    branches: ["main"]
-
-env:
-  ZIZMOR_VERSION: 1.28.0
 
 permissions: {}
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   zizmor:
-    name: zizmor via PyPI
+    name: Check workflows and actions with zizmor
     runs-on: ubuntu-latest
     permissions:
-      contents: read
-      security-events: write
-
+      security-events: write # upload SARIF findings to the Code Scanning tab
+      contents: read # checkout the repository
+      actions: read # required by zizmor-action to resolve reusable workflows
     steps:
       - name: Harden Runner
         uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
@@ -30,16 +30,5 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Install the latest version of uv
-        uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
-
       - name: Run zizmor
-        run: uvx "zizmor@${ZIZMOR_VERSION}" --format=sarif . > results.sarif
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Upload SARIF file
-        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
-        with:
-          sarif_file: results.sarif
-          category: zizmor
+        uses: zizmorcore/zizmor-action@45d7276c9ca790aabd705e31ca99c6185c3e76dd # v0.8.1
