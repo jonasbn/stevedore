@@ -10,7 +10,3 @@ Open feature requests and enhancements tracked as GitHub issues on
 - [ ] [#21](https://github.com/jonasbn/stevedore/issues/21) — Proposed feature: watch mode (continuously render the tree from #6 as `.dockerignore` changes)
 - [ ] [#24](https://github.com/jonasbn/stevedore/issues/24) — Evaluate parsing the ignore file so handled patterns can be marked
 - [ ] [#29](https://github.com/jonasbn/stevedore/issues/29) — Output as JSON for improved data handling
-
-## Not tracked here
-
-- [#2](https://github.com/jonasbn/stevedore/issues/2) — Renovate Dependency Dashboard (automated tracking issue, not actionable work)
