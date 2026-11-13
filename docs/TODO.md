@@ -13,4 +13,3 @@ Open feature requests and enhancements tracked as GitHub issues on
 
 ## Not tracked here
 
-- [#2](https://github.com/jonasbn/stevedore/issues/2) — Renovate Dependency Dashboard (automated tracking issue, not actionable work)
