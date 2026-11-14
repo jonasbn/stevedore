@@ -17,7 +17,7 @@ jobs:
     steps:
 
     - name: Harden Runner
-      uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
+      uses: step-security/harden-runner@1d88384fd173af6ecb012dfd0264a306b711241a # v2.22.4
       with:
         egress-policy: block
         allowed-endpoints: >
@@ -29,6 +29,6 @@ jobs:
         persist-credentials: false
 
     - name: Spellcheck
-      uses: rojopolis/spellcheck-github-actions@f2df388397bcb35f524b4a0a3567d6b1e8a4e595 # 0.68.0
+      uses: rojopolis/spellcheck-github-actions@dad57fc333130f4c9ae9632a6ad7ddc4de3515a2 # 0.69.0
       with:
         config_path: .github/spellcheck.yml # put path to configuration file here
